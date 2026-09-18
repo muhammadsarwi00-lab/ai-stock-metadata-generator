@@ -5,10 +5,6 @@ const allowedOrigins = [
 
 export default async function handler(req, res) {
 
-  // ==============================
-  // CORS
-  // ==============================
-
   const origin = req.headers.origin;
 
   if (allowedOrigins.includes(origin)) {
@@ -28,15 +24,9 @@ export default async function handler(req, res) {
     "Content-Type"
   );
 
-  // Handle browser preflight request
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
-
-
-  // ==============================
-  // METHOD CHECK
-  // ==============================
 
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -44,12 +34,7 @@ export default async function handler(req, res) {
     });
   }
 
-
   try {
-
-    // ==============================
-    // GET REQUEST DATA
-    // ==============================
 
     const {
       image,
@@ -58,33 +43,19 @@ export default async function handler(req, res) {
       description
     } = req.body || {};
 
-
     if (!image) {
       return res.status(400).json({
         error: "Image is required"
       });
     }
 
-
-    // ==============================
-    // GEMINI API KEY
-    // ==============================
-
-    const apiKey =
-      process.env.GEMINI_API_KEY;
-
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return res.status(500).json({
-        error:
-          "GEMINI_API_KEY is not configured in Vercel"
+        error: "GEMINI_API_KEY is not configured in Vercel"
       });
     }
-
-
-    // ==============================
-    // PROMPT
-    // ==============================
 
     const prompt = `
 You are an expert stock photography metadata specialist.
@@ -120,7 +91,7 @@ Write one professional English description describing:
 KEYWORDS:
 Generate exactly 49 unique English keywords.
 
-Rules for keywords:
+Rules:
 - Most important keywords first.
 - Relevant to the visible image.
 - Use single words or short phrases.
@@ -134,135 +105,133 @@ Rules for keywords:
 Return ONLY valid JSON.
 `;
 
-
-    // ==============================
-    // GEMINI REQUEST
-    // ==============================
-
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey
-        },
-
-        body: JSON.stringify({
-
-          contents: [
+    const requestBody = {
+      contents: [
+        {
+          parts: [
             {
-              parts: [
-
-                {
-                  text: prompt
-                },
-
-                {
-                  inline_data: {
-                    mime_type:
-                      mimeType || "image/jpeg",
-
-                    data: image
-                  }
-                }
-
-              ]
+              text: prompt
+            },
+            {
+              inline_data: {
+                mime_type: mimeType || "image/jpeg",
+                data: image
+              }
             }
-          ],
+          ]
+        }
+      ],
 
+      generationConfig: {
+        responseMimeType: "application/json",
 
-          // ==========================
-          // STRUCTURED JSON OUTPUT
-          // ==========================
+        responseSchema: {
+          type: "object",
 
-          generationConfig: {
+          properties: {
+            title: {
+              type: "string"
+            },
 
-            responseMimeType:
-              "application/json",
+            description: {
+              type: "string"
+            },
 
-            responseSchema: {
-
-              type: "object",
-
-              properties: {
-
-                title: {
-                  type: "string"
-                },
-
-                description: {
-                  type: "string"
-                },
-
-                keywords: {
-
-                  type: "array",
-
-                  items: {
-                    type: "string"
-                  },
-
-                  minItems: 49,
-
-                  maxItems: 49
-                }
-
+            keywords: {
+              type: "array",
+              items: {
+                type: "string"
               },
-
-              required: [
-                "title",
-                "description",
-                "keywords"
-              ]
-
+              minItems: 49,
+              maxItems: 49
             }
+          },
 
-          }
-
-        })
-
+          required: [
+            "title",
+            "description",
+            "keywords"
+          ]
+        }
       }
-    );
+    };
 
+    // Primary model
+    const models = [
+      "gemini-3.5-flash",
+      "gemini-3.5-flash-lite"
+    ];
 
-    // ==============================
-    // READ GEMINI RESPONSE
-    // ==============================
+    let response = null;
+    let data = null;
 
-    const data =
-      await response.json();
+    for (let i = 0; i < models.length; i++) {
 
+      const model = models[i];
 
-    // ==============================
-    // GEMINI ERROR
-    // ==============================
+      console.log(
+        `Trying Gemini model: ${model}`
+      );
 
-    if (!response.ok) {
+      response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey
+          },
+
+          body: JSON.stringify(requestBody)
+        }
+      );
+
+      data = await response.json();
+
+      // Success
+      if (response.ok) {
+        break;
+      }
 
       console.error(
-        "Gemini API error:",
+        `${model} failed:`,
         data
       );
 
-      return res.status(response.status).json({
+      // Retry/fallback only for temporary overload/rate-limit errors
+      if (
+        response.status !== 429 &&
+        response.status !== 500 &&
+        response.status !== 502 &&
+        response.status !== 503 &&
+        response.status !== 504
+      ) {
+        break;
+      }
 
-        error:
-          "Gemini API request failed",
+      // Small delay before fallback model
+      if (i < models.length - 1) {
+        await new Promise(
+          resolve => setTimeout(resolve, 1000)
+        );
+      }
+    }
+
+    if (!response || !response.ok) {
+
+      return res.status(
+        response?.status || 500
+      ).json({
+
+        error: "Gemini API request failed",
 
         details:
           data?.error?.message ||
           JSON.stringify(data)
 
       });
-
     }
-
-
-    // ==============================
-    // GET GENERATED TEXT
-    // ==============================
 
     const text =
       data
@@ -270,98 +239,52 @@ Return ONLY valid JSON.
         ?.content?.parts?.[0]
         ?.text;
 
-
     if (!text) {
-
-      console.error(
-        "Gemini returned no text:",
-        data
-      );
 
       return res.status(500).json({
 
-        error:
-          "Gemini returned no response",
+        error: "Gemini returned no response",
 
         details:
           JSON.stringify(data)
 
       });
-
     }
-
-
-    // ==============================
-    // PARSE JSON
-    // ==============================
 
     let metadata;
 
     try {
 
-      metadata =
-        JSON.parse(text);
+      metadata = JSON.parse(text);
 
     } catch (error) {
 
-      console.error(
-        "Invalid JSON from Gemini:",
-        text
-      );
-
       return res.status(500).json({
 
-        error:
-          "Gemini returned invalid JSON",
+        error: "Gemini returned invalid JSON",
 
-        details:
-          text
+        details: text
 
       });
-
     }
-
-
-    // ==============================
-    // CLEAN KEYWORDS
-    // ==============================
 
     let keywords =
       Array.isArray(metadata.keywords)
         ? metadata.keywords
         : [];
 
-
-    keywords =
-      keywords
-        .map(
-          keyword =>
-            String(keyword)
-              .trim()
-        )
-        .filter(Boolean);
-
-
-    // Remove duplicates
+    keywords = keywords
+      .map(keyword =>
+        String(keyword).trim()
+      )
+      .filter(Boolean);
 
     keywords = [
       ...new Set(keywords)
     ];
 
-
-    // Keep maximum 49
-
-    keywords =
-      keywords.slice(0, 49);
-
-
     metadata.keywords =
-      keywords;
-
-
-    // ==============================
-    // SUCCESS
-    // ==============================
+      keywords.slice(0, 49);
 
     return res.status(200).json({
 
@@ -376,12 +299,7 @@ Return ONLY valid JSON.
 
     });
 
-
   } catch (error) {
-
-    // ==============================
-    // SERVER ERROR
-    // ==============================
 
     console.error(
       "Server error:",
@@ -390,14 +308,10 @@ Return ONLY valid JSON.
 
     return res.status(500).json({
 
-      error:
-        "Internal server error",
+      error: "Internal server error",
 
-      details:
-        error.message
+      details: error.message
 
     });
-
   }
-
 }
