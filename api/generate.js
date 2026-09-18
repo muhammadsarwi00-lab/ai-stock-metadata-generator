@@ -23,48 +23,44 @@ export default async function handler(req, res) {
 
     if (!apiKey) {
       return res.status(500).json({
-        error: "GEMINI_API_KEY is not configured"
+        error: "GEMINI_API_KEY is not configured in Vercel"
       });
     }
 
     const prompt = `
 You are an expert stock photography metadata specialist.
 
-Analyze the uploaded image carefully and create professional metadata for stock content creators.
+Analyze the uploaded image carefully.
 
 Content category:
 ${category || "General"}
 
-Additional user description:
+Additional description:
 ${description || "None"}
 
-IMPORTANT:
-Only describe things that are visible or reasonably supported by the image.
-Do not invent brands, locations, people identities, events, or unsupported details.
+Create professional metadata for stock marketplaces.
 
-Return metadata in JSON format.
+IMPORTANT:
+- Only describe what is visible or reasonably supported by the image.
+- Do not invent brands, locations, identities, events, or unsupported details.
+- Avoid trademarks and brand names.
 
 Requirements:
 
-1. TITLE
-- Write one concise professional English stock title.
-- Clearly describe the main subject and context.
-- Avoid unnecessary marketing language.
+TITLE:
+Write one concise professional English stock title.
 
-2. DESCRIPTION
-- Write one professional English description.
-- Describe the visible subject, environment, activity, composition, and useful concepts.
-- Do not make unsupported claims.
+DESCRIPTION:
+Write one professional English description describing the visible subject, environment, activity, composition and useful concepts.
 
-3. KEYWORDS
-- Generate exactly 49 unique English keywords.
-- Put the most important keywords first.
-- Use relevant single words or short phrases.
-- Do not duplicate keywords.
-- Avoid brands and trademarks.
-- Make keywords useful for stock marketplaces.
+KEYWORDS:
+Generate exactly 49 unique English keywords.
+Put the most important keywords first.
+Use relevant single words or short phrases.
+Do not duplicate keywords.
+Do not use brands or trademarks.
 
-Return ONLY the requested JSON.
+Return ONLY valid JSON.
 `;
 
     const response = await fetch(
@@ -82,50 +78,54 @@ Return ONLY the requested JSON.
             {
               parts: [
                 {
-                  inlineData: {
-                    mimeType: mimeType || "image/jpeg",
-                    data: image
-                  }
+                  text: prompt
                 },
                 {
-                  text: prompt
+                  inline_data: {
+                    mime_type: mimeType || "image/jpeg",
+                    data: image
+                  }
                 }
               ]
             }
           ],
 
           generationConfig: {
-            responseMimeType: "application/json",
+            responseFormat: {
+              text: {
+                mimeType: "application/json",
 
-            responseSchema: {
-              type: "OBJECT",
+                schema: {
+                  type: "object",
 
-              properties: {
-                title: {
-                  type: "STRING"
-                },
+                  properties: {
+                    title: {
+                      type: "string"
+                    },
 
-                description: {
-                  type: "STRING"
-                },
+                    description: {
+                      type: "string"
+                    },
 
-                keywords: {
-                  type: "ARRAY",
+                    keywords: {
+                      type: "array",
 
-                  items: {
-                    type: "STRING"
+                      items: {
+                        type: "string"
+                      },
+
+                      minItems: 49,
+                      maxItems: 49
+                    }
                   },
 
-                  minItems: 49,
-                  maxItems: 49
+                  required: [
+                    "title",
+                    "description",
+                    "keywords"
+                  ]
                 }
-              },
-
-              required: [
-                "title",
-                "description",
-                "keywords"
-              ]
+              }
             }
           }
         })
@@ -139,7 +139,7 @@ Return ONLY the requested JSON.
 
       return res.status(response.status).json({
         error: "Gemini API request failed",
-        details: data
+        details: data?.error?.message || data
       });
     }
 
@@ -148,7 +148,8 @@ Return ONLY the requested JSON.
 
     if (!text) {
       return res.status(500).json({
-        error: "Gemini returned no text response"
+        error: "Gemini returned no response",
+        details: data
       });
     }
 
@@ -156,24 +157,21 @@ Return ONLY the requested JSON.
 
     try {
       metadata = JSON.parse(text);
-    } catch (parseError) {
-      console.error("Invalid JSON from Gemini:", text);
-
+    } catch (error) {
       return res.status(500).json({
-        error: "Gemini returned invalid JSON"
+        error: "Gemini returned invalid JSON",
+        details: text
       });
     }
 
-    if (!Array.isArray(metadata.keywords)) {
-      metadata.keywords = [];
-    }
+    const keywords = Array.isArray(metadata.keywords)
+      ? metadata.keywords
+          .map(k => String(k).trim())
+          .filter(Boolean)
+      : [];
 
     metadata.keywords = [
-      ...new Set(
-        metadata.keywords
-          .map(keyword => String(keyword).trim())
-          .filter(Boolean)
-      )
+      ...new Set(keywords)
     ].slice(0, 49);
 
     return res.status(200).json(metadata);
@@ -184,7 +182,7 @@ Return ONLY the requested JSON.
 
     return res.status(500).json({
       error: "Internal server error",
-      message: error.message
+      details: error.message
     });
   }
 }
