@@ -3,119 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free open-source metadata generator for stock content creators.">
+
   <title>AI Stock Metadata Generator</title>
 
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
 
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f7f6;
-      color: #17221d;
-      min-height: 100vh;
-    }
-
-    header {
-      background: #123b2a;
-      color: white;
-      padding: 24px 20px;
-      text-align: center;
-    }
-
-    header h1 {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-
-    header p {
-      color: #cfe4d9;
-      font-size: 15px;
+      background: #f4f7fb;
+      color: #1f2937;
     }
 
     .container {
-      width: 100%;
       max-width: 850px;
-      margin: 30px auto;
-      padding: 0 16px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .header h1 {
+      margin-bottom: 8px;
+      font-size: 30px;
+    }
+
+    .header p {
+      color: #6b7280;
     }
 
     .card {
       background: white;
-      border-radius: 18px;
-      padding: 24px;
+      border-radius: 16px;
+      padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.06);
-    }
-
-    .card h2 {
-      font-size: 20px;
-      margin-bottom: 18px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.06);
     }
 
     label {
       display: block;
       font-weight: bold;
-      margin: 16px 0 8px;
+      margin-bottom: 8px;
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      padding: 14px;
-      border: 1px solid #d5ddd8;
+      padding: 13px;
+      border: 1px solid #d1d5db;
       border-radius: 10px;
       font-size: 15px;
+      margin-bottom: 16px;
       outline: none;
     }
 
     textarea {
-      min-height: 110px;
+      min-height: 100px;
       resize: vertical;
     }
 
     input:focus,
     textarea:focus,
     select:focus {
-      border-color: #2d7a55;
+      border-color: #2563eb;
     }
 
     .preview {
       display: none;
+      margin-bottom: 18px;
       text-align: center;
-      margin-top: 20px;
     }
 
     .preview img {
       max-width: 100%;
-      max-height: 300px;
+      max-height: 350px;
       border-radius: 12px;
+      object-fit: contain;
+    }
+
+    .file-info {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #6b7280;
     }
 
     button {
+      width: 100%;
+      padding: 14px;
       border: none;
       border-radius: 10px;
-      padding: 13px 18px;
-      font-size: 15px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    .generate {
-      width: 100%;
-      margin-top: 20px;
-      background: #123b2a;
-      color: white;
-      font-size: 17px;
+    button:hover {
+      opacity: 0.9;
     }
 
-    .generate:hover {
-      background: #1d6043;
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #2563eb;
+      font-weight: bold;
     }
 
     .result {
@@ -123,39 +128,32 @@
     }
 
     .result-box {
-      background: #f7faf8;
-      border: 1px solid #dce7e1;
-      border-radius: 12px;
+      position: relative;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
       padding: 15px;
       margin-bottom: 18px;
     }
 
-    .result-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+    .result-box h3 {
+      margin-top: 0;
+      font-size: 17px;
     }
 
-    .result-header h3 {
-      font-size: 16px;
-    }
-
-    .copy {
-      background: #e7f0eb;
-      color: #174a34;
-      padding: 8px 12px;
-      font-size: 13px;
-    }
-
-    .copy:hover {
-      background: #d4e5dc;
-    }
-
-    .output {
+    .result-content {
       line-height: 1.6;
+      padding-right: 5px;
+      white-space: pre-wrap;
       word-break: break-word;
+    }
+
+    .copy-btn {
+      width: auto;
+      padding: 7px 12px;
+      font-size: 13px;
+      margin-top: 10px;
+      background: #111827;
     }
 
     .keywords {
@@ -165,33 +163,47 @@
     }
 
     .keyword {
-      background: #e9f2ed;
-      color: #22563d;
-      padding: 7px 10px;
+      background: #e8eefc;
+      color: #1e40af;
+      padding: 6px 10px;
       border-radius: 20px;
       font-size: 13px;
     }
 
-    footer {
-      text-align: center;
-      padding: 30px 15px;
-      color: #66736c;
+    .keyword-count {
+      color: #6b7280;
       font-size: 13px;
+      margin-bottom: 10px;
     }
 
-    .small {
-      color: #69766f;
+    .error {
+      display: none;
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      text-align: center;
+      color: #6b7280;
       font-size: 13px;
-      margin-top: 6px;
+      padding: 20px;
     }
 
     @media (max-width: 600px) {
-      header h1 {
-        font-size: 23px;
+      .container {
+        padding: 14px;
+      }
+
+      .header h1 {
+        font-size: 25px;
       }
 
       .card {
-        padding: 18px;
+        padding: 16px;
       }
     }
   </style>
@@ -199,309 +211,636 @@
 
 <body>
 
-<header>
-  <h1>AI Stock Metadata Generator</h1>
-  <p>Open-source metadata assistant for stock content creators</p>
-</header>
+<div class="container">
 
-<main class="container">
+  <div class="header">
+    <h1>🤖 AI Stock Metadata Generator</h1>
+    <p>Generate professional stock metadata using AI image analysis.</p>
+  </div>
 
-  <section class="card">
-    <h2>Generate Stock Metadata</h2>
+  <div class="card">
 
-    <label for="image">Upload Image</label>
-    <input type="file" id="image" accept="image/*">
+    <label for="imageInput">Upload Image</label>
+
+    <input
+      type="file"
+      id="imageInput"
+      accept="image/*"
+    >
 
     <div class="preview" id="preview">
       <img id="previewImage" alt="Image preview">
+      <div class="file-info" id="fileInfo"></div>
     </div>
 
-    <label for="description">Describe your image</label>
-    <textarea
-      id="description"
-      placeholder="Example: A young woman working on a laptop in a modern office..."
-    ></textarea>
+    <label for="category">Content Category</label>
 
-    <label for="category">Content category</label>
     <select id="category">
-      <option value="business">Business</option>
-      <option value="technology">Technology</option>
-      <option value="lifestyle">Lifestyle</option>
-      <option value="nature">Nature</option>
-      <option value="food">Food</option>
-      <option value="travel">Travel</option>
-      <option value="education">Education</option>
-      <option value="background">Background</option>
+      <option value="General">General</option>
+      <option value="People">People</option>
+      <option value="Nature">Nature</option>
+      <option value="Business">Business</option>
+      <option value="Technology">Technology</option>
+      <option value="Food">Food</option>
+      <option value="Travel">Travel</option>
+      <option value="Lifestyle">Lifestyle</option>
+      <option value="Education">Education</option>
+      <option value="Health">Health</option>
+      <option value="Background">Background</option>
+      <option value="Architecture">Architecture</option>
     </select>
 
-    <button class="generate" onclick="generateMetadata()">
-      ✨ Generate Metadata
-    </button>
-  </section>
+    <label for="description">
+      Additional Description
+    </label>
 
-  <section class="card result" id="result">
+    <textarea
+      id="description"
+      placeholder="Optional: describe anything important about the image..."
+    ></textarea>
+
+    <button id="generateBtn">
+      ✨ Generate AI Metadata
+    </button>
+
+    <div class="loading" id="loading">
+      🔍 AI is analyzing your image...<br>
+      <small>This may take a few seconds.</small>
+    </div>
+
+    <div class="error" id="error"></div>
+
+  </div>
+
+
+  <div class="card result" id="result">
 
     <h2>Generated Metadata</h2>
 
     <div class="result-box">
-      <div class="result-header">
-        <h3>Title</h3>
-        <button class="copy" onclick="copyText('titleOutput')">Copy</button>
-      </div>
-      <div class="output" id="titleOutput"></div>
+
+      <h3>📌 Title</h3>
+
+      <div
+        class="result-content"
+        id="titleResult"
+      ></div>
+
+      <button
+        class="copy-btn"
+        onclick="copyText('titleResult')"
+      >
+        📋 Copy Title
+      </button>
+
     </div>
+
 
     <div class="result-box">
-      <div class="result-header">
-        <h3>Description</h3>
-        <button class="copy" onclick="copyText('descriptionOutput')">Copy</button>
-      </div>
-      <div class="output" id="descriptionOutput"></div>
+
+      <h3>📝 Description</h3>
+
+      <div
+        class="result-content"
+        id="descriptionResult"
+      ></div>
+
+      <button
+        class="copy-btn"
+        onclick="copyText('descriptionResult')"
+      >
+        📋 Copy Description
+      </button>
+
     </div>
+
 
     <div class="result-box">
-      <div class="result-header">
-        <h3>Keywords</h3>
-        <button class="copy" onclick="copyKeywords()">Copy</button>
-      </div>
-      <div class="keywords" id="keywordsOutput"></div>
+
+      <h3>🔑 Keywords</h3>
+
+      <div
+        class="keyword-count"
+        id="keywordCount"
+      ></div>
+
+      <div
+        class="keywords"
+        id="keywordsResult"
+      ></div>
+
+      <button
+        class="copy-btn"
+        onclick="copyKeywords()"
+      >
+        📋 Copy All Keywords
+      </button>
+
     </div>
 
-  </section>
+  </div>
 
-  <section class="card">
-    <h2>About this project</h2>
-    <p>
-      This is an open-source project designed to help stock content creators
-      prepare metadata more efficiently.
-    </p>
-    <p class="small">
-      This version works locally in the browser. AI-powered image analysis
-      can be added in future versions.
-    </p>
-  </section>
 
-</main>
+  <div class="footer">
+    AI Stock Metadata Generator · Open Source · MIT License
+  </div>
 
-<footer>
-  AI Stock Metadata Generator · Open Source · MIT License
-</footer>
+</div>
+
 
 <script>
 
-  const imageInput = document.getElementById("image");
-  const preview = document.getElementById("preview");
-  const previewImage = document.getElementById("previewImage");
+  /*
+   * Vercel API endpoint.
+   *
+   * When this page is running on Vercel,
+   * /api/generate is used.
+   *
+   * When running from GitHub Pages,
+   * the Vercel API is used directly.
+   */
 
-  imageInput.addEventListener("change", function () {
-    const file = this.files[0];
+  const VERCEL_API =
+    "https://ai-stock-metadata-generator.vercel.app/api/generate";
 
-    if (file) {
-      previewImage.src = URL.createObjectURL(file);
-      preview.style.display = "block";
+
+  const imageInput =
+    document.getElementById("imageInput");
+
+  const preview =
+    document.getElementById("preview");
+
+  const previewImage =
+    document.getElementById("previewImage");
+
+  const fileInfo =
+    document.getElementById("fileInfo");
+
+  const generateBtn =
+    document.getElementById("generateBtn");
+
+  const loading =
+    document.getElementById("loading");
+
+  const errorBox =
+    document.getElementById("error");
+
+  const result =
+    document.getElementById("result");
+
+
+  let selectedFile = null;
+
+
+  /*
+   * Image selection
+   */
+
+  imageInput.addEventListener(
+    "change",
+    function() {
+
+      const file = this.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      /*
+       * Maximum image size:
+       * 15 MB
+       */
+
+      const maxSize =
+        15 * 1024 * 1024;
+
+      if (file.size > maxSize) {
+
+        showError(
+          "Image terlalu besar. Maksimal ukuran file adalah 15 MB."
+        );
+
+        this.value = "";
+
+        return;
+      }
+
+
+      if (!file.type.startsWith("image/")) {
+
+        showError(
+          "File harus berupa gambar."
+        );
+
+        this.value = "";
+
+        return;
+      }
+
+
+      selectedFile = file;
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload = function(e) {
+
+        previewImage.src =
+          e.target.result;
+
+        preview.style.display =
+          "block";
+
+      };
+
+
+      reader.readAsDataURL(file);
+
+
+      const sizeMB =
+        (file.size / 1024 / 1024)
+          .toFixed(2);
+
+
+      fileInfo.textContent =
+        `${file.name} · ${sizeMB} MB`;
+
+
+      hideError();
+
     }
-  });
+  );
 
-  function generateMetadata() {
 
-    const description =
-      document.getElementById("description").value.trim();
+  /*
+   * Generate Metadata
+   */
 
-    const category =
-      document.getElementById("category").value;
+  generateBtn.addEventListener(
+    "click",
+    async function() {
 
-    if (!description) {
-      alert("Please describe your image first.");
-      return;
+      if (!selectedFile) {
+
+        showError(
+          "Silakan upload gambar terlebih dahulu."
+        );
+
+        return;
+      }
+
+
+      hideError();
+
+      result.style.display =
+        "none";
+
+      generateBtn.disabled =
+        true;
+
+      generateBtn.textContent =
+        "⏳ Analyzing...";
+
+      loading.style.display =
+        "block";
+
+
+      try {
+
+        /*
+         * Convert image to Base64
+         */
+
+        const base64 =
+          await fileToBase64(
+            selectedFile
+          );
+
+
+        /*
+         * Remove:
+         * data:image/jpeg;base64,
+         */
+
+        const cleanBase64 =
+          base64.split(",")[1];
+
+
+        const category =
+          document.getElementById(
+            "category"
+          ).value;
+
+
+        const description =
+          document.getElementById(
+            "description"
+          ).value;
+
+
+        /*
+         * Send image to Vercel API
+         */
+
+        const response =
+          await fetch(
+            VERCEL_API,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+
+                image:
+                  cleanBase64,
+
+                mimeType:
+                  selectedFile.type,
+
+                category:
+                  category,
+
+                description:
+                  description
+
+              })
+
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          console.error(
+            "API error:",
+            data
+          );
+
+          throw new Error(
+            data.error ||
+            "Failed to generate metadata."
+          );
+
+        }
+
+
+        /*
+         * Display Title
+         */
+
+        document.getElementById(
+          "titleResult"
+        ).textContent =
+          data.title || "";
+
+
+        /*
+         * Display Description
+         */
+
+        document.getElementById(
+          "descriptionResult"
+        ).textContent =
+          data.description || "";
+
+
+        /*
+         * Display Keywords
+         */
+
+        const keywords =
+          Array.isArray(data.keywords)
+            ? data.keywords
+            : [];
+
+
+        const keywordContainer =
+          document.getElementById(
+            "keywordsResult"
+          );
+
+
+        keywordContainer.innerHTML =
+          "";
+
+
+        keywords.forEach(
+          function(keyword) {
+
+            const span =
+              document.createElement(
+                "span"
+              );
+
+            span.className =
+              "keyword";
+
+            span.textContent =
+              keyword;
+
+            keywordContainer.appendChild(
+              span
+            );
+
+          }
+        );
+
+
+        document.getElementById(
+          "keywordCount"
+        ).textContent =
+          `${keywords.length} keywords generated`;
+
+
+        /*
+         * Show result
+         */
+
+        result.style.display =
+          "block";
+
+
+        /*
+         * Scroll to result
+         */
+
+        result.scrollIntoView({
+          behavior: "smooth"
+        });
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        showError(
+          "Gagal membuat metadata: " +
+          error.message
+        );
+
+      } finally {
+
+        loading.style.display =
+          "none";
+
+        generateBtn.disabled =
+          false;
+
+        generateBtn.textContent =
+          "✨ Generate AI Metadata";
+
+      }
+
     }
+  );
 
-    const cleanDescription =
-      description.replace(/\s+/g, " ").trim();
 
-    const title =
-      createTitle(cleanDescription);
+  /*
+   * Convert File → Base64
+   */
 
-    const generatedDescription =
-      createDescription(cleanDescription, category);
+  function fileToBase64(file) {
 
-    const keywords =
-      createKeywords(cleanDescription, category);
+    return new Promise(
+      function(resolve, reject) {
 
-    document.getElementById("titleOutput").textContent = title;
+        const reader =
+          new FileReader();
 
-    document.getElementById("descriptionOutput").textContent =
-      generatedDescription;
 
-    const keywordContainer =
-      document.getElementById("keywordsOutput");
+        reader.onload =
+          function() {
+            resolve(
+              reader.result
+            );
+          };
 
-    keywordContainer.innerHTML = "";
 
-    keywords.forEach(keyword => {
+        reader.onerror =
+          function() {
+            reject(
+              new Error(
+                "Failed to read image."
+              )
+            );
+          };
 
-      const span = document.createElement("span");
 
-      span.className = "keyword";
+        reader.readAsDataURL(file);
 
-      span.textContent = keyword;
+      }
+    );
 
-      keywordContainer.appendChild(span);
-
-    });
-
-    document.getElementById("result").style.display = "block";
-
-    window.scrollTo({
-      top: document.getElementById("result").offsetTop - 20,
-      behavior: "smooth"
-    });
   }
 
-  function createTitle(text) {
 
-    let title = text;
+  /*
+   * Copy Title / Description
+   */
 
-    title =
-      title.charAt(0).toUpperCase() +
-      title.slice(1);
-
-    if (title.length > 120) {
-      title = title.substring(0, 117) + "...";
-    }
-
-    return title;
-  }
-
-  function createDescription(text, category) {
-
-    const categoryText = {
-      business: "business and professional",
-      technology: "technology and digital work",
-      lifestyle: "lifestyle and everyday life",
-      nature: "nature and the environment",
-      food: "food and culinary content",
-      travel: "travel and tourism",
-      education: "education and learning",
-      background: "creative background and visual design"
-    };
-
-    return `${text}. This stock image represents ${categoryText[category]} concepts and can be used for websites, advertising, editorial design, presentations, social media, and creative projects.`;
-  }
-
-  function createKeywords(text, category) {
-
-    const words = text
-      .toLowerCase()
-      .replace(/[^a-zA-Z0-9\s]/g, "")
-      .split(/\s+/)
-      .filter(word => word.length > 3);
-
-    const categoryKeywords = {
-
-      business: [
-        "business",
-        "professional",
-        "work",
-        "office",
-        "corporate",
-        "success",
-        "career"
-      ],
-
-      technology: [
-        "technology",
-        "digital",
-        "computer",
-        "innovation",
-        "software",
-        "internet",
-        "modern"
-      ],
-
-      lifestyle: [
-        "lifestyle",
-        "people",
-        "daily life",
-        "modern",
-        "wellness",
-        "creative"
-      ],
-
-      nature: [
-        "nature",
-        "environment",
-        "outdoor",
-        "landscape",
-        "natural",
-        "scenic"
-      ],
-
-      food: [
-        "food",
-        "culinary",
-        "cooking",
-        "fresh",
-        "delicious",
-        "restaurant"
-      ],
-
-      travel: [
-        "travel",
-        "tourism",
-        "vacation",
-        "destination",
-        "journey",
-        "adventure"
-      ],
-
-      education: [
-        "education",
-        "learning",
-        "school",
-        "student",
-        "knowledge",
-        "study"
-      ],
-
-      background: [
-        "background",
-        "abstract",
-        "design",
-        "creative",
-        "texture",
-        "pattern"
-      ]
-
-    };
-
-    const combined = [
-      ...words,
-      ...categoryKeywords[category]
-    ];
-
-    return [...new Set(combined)].slice(0, 49);
-  }
-
-  function copyText(elementId) {
+  async function copyText(
+    elementId
+  ) {
 
     const text =
-      document.getElementById(elementId).textContent;
+      document.getElementById(
+        elementId
+      ).textContent;
 
-    navigator.clipboard.writeText(text);
 
-    alert("Copied!");
+    try {
+
+      await navigator.clipboard
+        .writeText(text);
+
+      alert(
+        "Copied successfully!"
+      );
+
+    } catch {
+
+      alert(
+        "Copy failed. Please copy manually."
+      );
+
+    }
+
   }
 
-  function copyKeywords() {
+
+  /*
+   * Copy all keywords
+   */
+
+  async function copyKeywords() {
+
+    const keywordElements =
+      document.querySelectorAll(
+        ".keyword"
+      );
+
 
     const keywords =
-      [...document.querySelectorAll(".keyword")]
-        .map(element => element.textContent)
-        .join(", ");
+      Array.from(
+        keywordElements
+      )
+      .map(
+        element =>
+          element.textContent
+      )
+      .join(", ");
 
-    navigator.clipboard.writeText(keywords);
 
-    alert("Keywords copied!");
+    try {
+
+      await navigator.clipboard
+        .writeText(keywords);
+
+      alert(
+        "All keywords copied!"
+      );
+
+    } catch {
+
+      alert(
+        "Copy failed. Please copy manually."
+      );
+
+    }
+
+  }
+
+
+  /*
+   * Error handling
+   */
+
+  function showError(message) {
+
+    errorBox.textContent =
+      message;
+
+    errorBox.style.display =
+      "block";
+
+  }
+
+
+  function hideError() {
+
+    errorBox.style.display =
+      "none";
+
   }
 
 </script>
