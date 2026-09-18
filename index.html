@@ -128,7 +128,6 @@
     }
 
     .result-box {
-      position: relative;
       background: #f9fafb;
       border: 1px solid #e5e7eb;
       border-radius: 10px;
@@ -184,6 +183,16 @@
       padding: 14px;
       margin-top: 15px;
       line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .success {
+      display: none;
+      background: #dcfce7;
+      color: #166534;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 15px;
     }
 
     .footer {
@@ -215,12 +224,19 @@
 
   <div class="header">
     <h1>🤖 AI Stock Metadata Generator</h1>
-    <p>Generate professional stock metadata using AI image analysis.</p>
+    <p>
+      Generate professional stock metadata using AI image analysis.
+    </p>
   </div>
+
+
+  <!-- UPLOAD CARD -->
 
   <div class="card">
 
-    <label for="imageInput">Upload Image</label>
+    <label for="imageInput">
+      Upload Image
+    </label>
 
     <input
       type="file"
@@ -228,27 +244,81 @@
       accept="image/*"
     >
 
-    <div class="preview" id="preview">
-      <img id="previewImage" alt="Image preview">
-      <div class="file-info" id="fileInfo"></div>
+
+    <div
+      class="preview"
+      id="preview"
+    >
+
+      <img
+        id="previewImage"
+        alt="Image preview"
+      >
+
+      <div
+        class="file-info"
+        id="fileInfo"
+      ></div>
+
     </div>
 
-    <label for="category">Content Category</label>
+
+    <label for="category">
+      Content Category
+    </label>
 
     <select id="category">
-      <option value="General">General</option>
-      <option value="People">People</option>
-      <option value="Nature">Nature</option>
-      <option value="Business">Business</option>
-      <option value="Technology">Technology</option>
-      <option value="Food">Food</option>
-      <option value="Travel">Travel</option>
-      <option value="Lifestyle">Lifestyle</option>
-      <option value="Education">Education</option>
-      <option value="Health">Health</option>
-      <option value="Background">Background</option>
-      <option value="Architecture">Architecture</option>
+
+      <option value="General">
+        General
+      </option>
+
+      <option value="People">
+        People
+      </option>
+
+      <option value="Nature">
+        Nature
+      </option>
+
+      <option value="Business">
+        Business
+      </option>
+
+      <option value="Technology">
+        Technology
+      </option>
+
+      <option value="Food">
+        Food
+      </option>
+
+      <option value="Travel">
+        Travel
+      </option>
+
+      <option value="Lifestyle">
+        Lifestyle
+      </option>
+
+      <option value="Education">
+        Education
+      </option>
+
+      <option value="Health">
+        Health
+      </option>
+
+      <option value="Background">
+        Background
+      </option>
+
+      <option value="Architecture">
+        Architecture
+      </option>
+
     </select>
+
 
     <label for="description">
       Additional Description
@@ -259,27 +329,59 @@
       placeholder="Optional: describe anything important about the image..."
     ></textarea>
 
+
     <button id="generateBtn">
       ✨ Generate AI Metadata
     </button>
 
-    <div class="loading" id="loading">
-      🔍 AI is analyzing your image...<br>
-      <small>This may take a few seconds.</small>
+
+    <div
+      class="loading"
+      id="loading"
+    >
+      🔍 AI is analyzing your image...
+      <br>
+      <small>
+        This may take a few seconds.
+      </small>
     </div>
 
-    <div class="error" id="error"></div>
+
+    <div
+      class="error"
+      id="error"
+    ></div>
+
+
+    <div
+      class="success"
+      id="success"
+    >
+      ✅ Metadata generated successfully!
+    </div>
 
   </div>
 
 
-  <div class="card result" id="result">
+  <!-- RESULT -->
 
-    <h2>Generated Metadata</h2>
+  <div
+    class="card result"
+    id="result"
+  >
+
+    <h2>
+      Generated Metadata
+    </h2>
+
+
+    <!-- TITLE -->
 
     <div class="result-box">
 
-      <h3>📌 Title</h3>
+      <h3>
+        📌 Title
+      </h3>
 
       <div
         class="result-content"
@@ -296,9 +398,13 @@
     </div>
 
 
+    <!-- DESCRIPTION -->
+
     <div class="result-box">
 
-      <h3>📝 Description</h3>
+      <h3>
+        📝 Description
+      </h3>
 
       <div
         class="result-content"
@@ -315,9 +421,13 @@
     </div>
 
 
+    <!-- KEYWORDS -->
+
     <div class="result-box">
 
-      <h3>🔑 Keywords</h3>
+      <h3>
+        🔑 Keywords
+      </h3>
 
       <div
         class="keyword-count"
@@ -342,7 +452,13 @@
 
 
   <div class="footer">
-    AI Stock Metadata Generator · Open Source · MIT License
+
+    AI Stock Metadata Generator
+    ·
+    Open Source
+    ·
+    MIT License
+
   </div>
 
 </div>
@@ -350,77 +466,131 @@
 
 <script>
 
+
   /*
-   * Vercel API endpoint.
+   * ==========================================
+   * VERCEL API
+   * ==========================================
    *
-   * When this page is running on Vercel,
-   * /api/generate is used.
+   * IMPORTANT:
+   * We use a relative API path.
    *
-   * When running from GitHub Pages,
-   * the Vercel API is used directly.
+   * This means:
+   *
+   * https://your-vercel-domain.vercel.app
+   *
+   * automatically calls:
+   *
+   * /api/generate
+   *
+   * No hard-coded Vercel domain.
+   *
    */
 
   const VERCEL_API =
-    "https://ai-stock-metadata-generator.vercel.app/api/generate";
+    "/api/generate";
 
+
+  /*
+   * ==========================================
+   * ELEMENTS
+   * ==========================================
+   */
 
   const imageInput =
-    document.getElementById("imageInput");
+    document.getElementById(
+      "imageInput"
+    );
 
   const preview =
-    document.getElementById("preview");
+    document.getElementById(
+      "preview"
+    );
 
   const previewImage =
-    document.getElementById("previewImage");
+    document.getElementById(
+      "previewImage"
+    );
 
   const fileInfo =
-    document.getElementById("fileInfo");
+    document.getElementById(
+      "fileInfo"
+    );
 
   const generateBtn =
-    document.getElementById("generateBtn");
+    document.getElementById(
+      "generateBtn"
+    );
 
   const loading =
-    document.getElementById("loading");
+    document.getElementById(
+      "loading"
+    );
 
   const errorBox =
-    document.getElementById("error");
+    document.getElementById(
+      "error"
+    );
+
+  const successBox =
+    document.getElementById(
+      "success"
+    );
 
   const result =
-    document.getElementById("result");
+    document.getElementById(
+      "result"
+    );
 
 
   let selectedFile = null;
 
 
   /*
-   * Image selection
+   * ==========================================
+   * IMAGE SELECTION
+   * ==========================================
    */
 
   imageInput.addEventListener(
     "change",
     function() {
 
-      const file = this.files[0];
+      const file =
+        this.files[0];
+
 
       if (!file) {
         return;
       }
 
+
       /*
-       * Maximum image size:
-       * 15 MB
+       * Vercel Function payload
+       * limit is about 4.5 MB.
+       *
+       * Because Base64 increases
+       * the request size, keep the
+       * original image below 3 MB.
        */
 
       const maxSize =
-        15 * 1024 * 1024;
+        3 * 1024 * 1024;
+
 
       if (file.size > maxSize) {
 
         showError(
-          "Image terlalu besar. Maksimal ukuran file adalah 15 MB."
+          "Image terlalu besar. " +
+          "Maksimal ukuran file adalah 3 MB."
         );
 
         this.value = "";
+
+        selectedFile = null;
+
+        preview.style.display =
+          "none";
 
         return;
       }
@@ -434,34 +604,51 @@
 
         this.value = "";
 
+        selectedFile = null;
+
         return;
       }
 
 
-      selectedFile = file;
+      selectedFile =
+        file;
 
+
+      /*
+       * Preview
+       */
 
       const reader =
         new FileReader();
 
 
-      reader.onload = function(e) {
+      reader.onload =
+        function(event) {
 
-        previewImage.src =
-          e.target.result;
+          previewImage.src =
+            event.target.result;
 
-        preview.style.display =
-          "block";
+          preview.style.display =
+            "block";
 
-      };
+        };
 
 
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(
+        file
+      );
 
+
+      /*
+       * File information
+       */
 
       const sizeMB =
-        (file.size / 1024 / 1024)
-          .toFixed(2);
+        (
+          file.size /
+          1024 /
+          1024
+        ).toFixed(2);
 
 
       fileInfo.textContent =
@@ -470,17 +657,22 @@
 
       hideError();
 
+      hideSuccess();
+
     }
   );
 
 
   /*
-   * Generate Metadata
+   * ==========================================
+   * GENERATE METADATA
+   * ==========================================
    */
 
   generateBtn.addEventListener(
     "click",
     async function() {
+
 
       if (!selectedFile) {
 
@@ -494,20 +686,27 @@
 
       hideError();
 
+      hideSuccess();
+
+
       result.style.display =
         "none";
+
 
       generateBtn.disabled =
         true;
 
+
       generateBtn.textContent =
         "⏳ Analyzing...";
+
 
       loading.style.display =
         "block";
 
 
       try {
+
 
         /*
          * Convert image to Base64
@@ -521,12 +720,19 @@
 
         /*
          * Remove:
+         *
          * data:image/jpeg;base64,
+         *
+         * leaving only Base64.
          */
 
         const cleanBase64 =
           base64.split(",")[1];
 
+
+        /*
+         * Get form values
+         */
 
         const category =
           document.getElementById(
@@ -541,43 +747,58 @@
 
 
         /*
-         * Send image to Vercel API
+         * Send request to:
+         *
+         * /api/generate
          */
 
         const response =
           await fetch(
             VERCEL_API,
             {
-              method: "POST",
+
+              method:
+                "POST",
 
               headers: {
+
                 "Content-Type":
                   "application/json"
+
               },
 
-              body: JSON.stringify({
+              body:
+                JSON.stringify({
 
-                image:
-                  cleanBase64,
+                  image:
+                    cleanBase64,
 
-                mimeType:
-                  selectedFile.type,
+                  mimeType:
+                    selectedFile.type,
 
-                category:
-                  category,
+                  category:
+                    category,
 
-                description:
-                  description
+                  description:
+                    description
 
-              })
+                })
 
             }
           );
 
 
+        /*
+         * Read response
+         */
+
         const data =
           await response.json();
 
+
+        /*
+         * API ERROR
+         */
 
         if (!response.ok) {
 
@@ -586,16 +807,22 @@
             data
           );
 
-          throw new Error(
+
+          const errorMessage =
+            data.details ||
             data.error ||
-            "Failed to generate metadata."
+            "Failed to generate metadata.";
+
+
+          throw new Error(
+            errorMessage
           );
 
         }
 
 
         /*
-         * Display Title
+         * TITLE
          */
 
         document.getElementById(
@@ -605,7 +832,7 @@
 
 
         /*
-         * Display Description
+         * DESCRIPTION
          */
 
         document.getElementById(
@@ -615,11 +842,13 @@
 
 
         /*
-         * Display Keywords
+         * KEYWORDS
          */
 
         const keywords =
-          Array.isArray(data.keywords)
+          Array.isArray(
+            data.keywords
+          )
             ? data.keywords
             : [];
 
@@ -642,11 +871,14 @@
                 "span"
               );
 
+
             span.className =
               "keyword";
 
+
             span.textContent =
               keyword;
+
 
             keywordContainer.appendChild(
               span
@@ -655,6 +887,10 @@
           }
         );
 
+
+        /*
+         * Keyword counter
+         */
 
         document.getElementById(
           "keywordCount"
@@ -671,6 +907,14 @@
 
 
         /*
+         * Success message
+         */
+
+        successBox.style.display =
+          "block";
+
+
+        /*
          * Scroll to result
          */
 
@@ -681,20 +925,29 @@
 
       } catch (error) {
 
-        console.error(error);
+
+        console.error(
+          "Generate error:",
+          error
+        );
+
 
         showError(
           "Gagal membuat metadata: " +
           error.message
         );
 
+
       } finally {
+
 
         loading.style.display =
           "none";
 
+
         generateBtn.disabled =
           false;
+
 
         generateBtn.textContent =
           "✨ Generate AI Metadata";
@@ -706,13 +959,21 @@
 
 
   /*
-   * Convert File → Base64
+   * ==========================================
+   * FILE → BASE64
+   * ==========================================
    */
 
-  function fileToBase64(file) {
+  function fileToBase64(
+    file
+  ) {
 
     return new Promise(
-      function(resolve, reject) {
+      function(
+        resolve,
+        reject
+      ) {
+
 
         const reader =
           new FileReader();
@@ -720,23 +981,29 @@
 
         reader.onload =
           function() {
+
             resolve(
               reader.result
             );
+
           };
 
 
         reader.onerror =
           function() {
+
             reject(
               new Error(
                 "Failed to read image."
               )
             );
+
           };
 
 
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(
+          file
+        );
 
       }
     );
@@ -745,29 +1012,42 @@
 
 
   /*
-   * Copy Title / Description
+   * ==========================================
+   * COPY TITLE / DESCRIPTION
+   * ==========================================
    */
 
   async function copyText(
     elementId
   ) {
 
-    const text =
+
+    const element =
       document.getElementById(
         elementId
-      ).textContent;
+      );
+
+
+    const text =
+      element.textContent;
 
 
     try {
 
+
       await navigator.clipboard
-        .writeText(text);
+        .writeText(
+          text
+        );
+
 
       alert(
         "Copied successfully!"
       );
 
+
     } catch {
+
 
       alert(
         "Copy failed. Please copy manually."
@@ -779,10 +1059,13 @@
 
 
   /*
-   * Copy all keywords
+   * ==========================================
+   * COPY KEYWORDS
+   * ==========================================
    */
 
   async function copyKeywords() {
+
 
     const keywordElements =
       document.querySelectorAll(
@@ -795,22 +1078,31 @@
         keywordElements
       )
       .map(
-        element =>
-          element.textContent
+        function(element) {
+
+          return element.textContent;
+
+        }
       )
       .join(", ");
 
 
     try {
 
+
       await navigator.clipboard
-        .writeText(keywords);
+        .writeText(
+          keywords
+        );
+
 
       alert(
         "All keywords copied!"
       );
 
+
     } catch {
+
 
       alert(
         "Copy failed. Please copy manually."
@@ -822,13 +1114,18 @@
 
 
   /*
-   * Error handling
+   * ==========================================
+   * ERROR
+   * ==========================================
    */
 
-  function showError(message) {
+  function showError(
+    message
+  ) {
 
     errorBox.textContent =
       message;
+
 
     errorBox.style.display =
       "block";
@@ -839,6 +1136,20 @@
   function hideError() {
 
     errorBox.style.display =
+      "none";
+
+  }
+
+
+  /*
+   * ==========================================
+   * SUCCESS
+   * ==========================================
+   */
+
+  function hideSuccess() {
+
+    successBox.style.display =
       "none";
 
   }
