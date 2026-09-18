@@ -53,54 +53,70 @@ export default async function handler(req, res) {
 
     if (!apiKey) {
       return res.status(500).json({
-        error: "GEMINI_API_KEY is not configured in Vercel"
+        error:
+          "GEMINI_API_KEY is not configured in Vercel"
       });
     }
 
     const prompt = `
-You are an expert stock photography metadata specialist.
+You are a professional stock photography metadata specialist.
 
-Analyze the uploaded image carefully.
+Analyze the uploaded image carefully and create metadata suitable for commercial stock photography marketplaces such as Adobe Stock.
 
-Content category:
+CONTENT CATEGORY:
 ${category || "General"}
 
-Additional description:
+USER DESCRIPTION:
 ${description || "None"}
 
-Create professional metadata for stock marketplaces.
-
-IMPORTANT:
-- Only describe things that are visible or reasonably supported by the image.
-- Do not invent brands, locations, identities, events, or unsupported details.
-- Avoid trademarks and brand names.
+IMPORTANT IMAGE ANALYSIS RULES:
+- Analyze only what is actually visible in the image.
+- Do not invent information.
+- Do not guess exact locations.
 - Do not identify people.
-- Use professional stock marketplace language.
+- Do not invent brands or trademarks.
+- Do not mention fictional objects or activities.
+- If something is uncertain, do not include it.
+- Prioritize visually important subjects.
+- Consider composition, food/object type, colors, setting, activity, concept, and commercial stock usage.
 
 TITLE:
-Write one concise professional English stock title.
+Create one concise, natural English stock title.
+The title should describe the main visible subject clearly.
+Avoid unnecessary adjectives.
+Do not use brands.
+Do not use keyword stuffing.
+Prefer approximately 8-18 words.
 
 DESCRIPTION:
-Write one professional English description describing:
-- main subject
-- visible environment
-- activity
-- composition
-- useful stock concepts
+Write one professional English stock description.
+Describe the main subject, visible environment, activity, composition, and useful commercial concepts.
+Keep it natural and factual.
+Do not invent information.
 
 KEYWORDS:
-Generate exactly 49 unique English keywords.
+Generate exactly 49 unique English keywords or short keyword phrases.
 
-Rules:
-- Most important keywords first.
-- Relevant to the visible image.
+KEYWORD ORDER:
+Place the most important and visually relevant keywords first.
+
+KEYWORD RULES:
+- Exactly 49 keywords.
+- Every keyword must be unique.
+- English language.
+- Relevant to the image.
+- Prioritize the main subject.
+- Include useful concepts for stock buyers.
+- Include visual characteristics when relevant.
+- Include food/object/material/context terms when visible.
+- Do not include brands.
+- Do not include trademarks.
+- Do not include people's names.
+- Do not include unsupported locations.
+- Do not include unrelated generic words.
+- Avoid keyword stuffing.
 - Use single words or short phrases.
-- No duplicate keywords.
-- No brands.
-- No trademarks.
-- No unsupported locations.
-- No people's names.
-- Avoid irrelevant generic keywords.
+- Do not repeat the same concept unnecessarily.
 
 Return ONLY valid JSON.
 `;
@@ -139,10 +155,13 @@ Return ONLY valid JSON.
 
             keywords: {
               type: "array",
+
               items: {
                 type: "string"
               },
+
               minItems: 49,
+
               maxItems: 49
             }
           },
@@ -156,7 +175,6 @@ Return ONLY valid JSON.
       }
     };
 
-    // Primary model
     const models = [
       "gemini-3.5-flash",
       "gemini-3.5-flash-lite"
@@ -170,7 +188,7 @@ Return ONLY valid JSON.
       const model = models[i];
 
       console.log(
-        `Trying Gemini model: ${model}`
+        `Trying model: ${model}`
       );
 
       response = await fetch(
@@ -189,7 +207,6 @@ Return ONLY valid JSON.
 
       data = await response.json();
 
-      // Success
       if (response.ok) {
         break;
       }
@@ -199,7 +216,6 @@ Return ONLY valid JSON.
         data
       );
 
-      // Retry/fallback only for temporary overload/rate-limit errors
       if (
         response.status !== 429 &&
         response.status !== 500 &&
@@ -210,10 +226,9 @@ Return ONLY valid JSON.
         break;
       }
 
-      // Small delay before fallback model
       if (i < models.length - 1) {
         await new Promise(
-          resolve => setTimeout(resolve, 1000)
+          resolve => setTimeout(resolve, 1200)
         );
       }
     }
@@ -224,7 +239,8 @@ Return ONLY valid JSON.
         response?.status || 500
       ).json({
 
-        error: "Gemini API request failed",
+        error:
+          "Gemini API request failed",
 
         details:
           data?.error?.message ||
@@ -243,7 +259,8 @@ Return ONLY valid JSON.
 
       return res.status(500).json({
 
-        error: "Gemini returned no response",
+        error:
+          "Gemini returned no response",
 
         details:
           JSON.stringify(data)
@@ -261,9 +278,11 @@ Return ONLY valid JSON.
 
       return res.status(500).json({
 
-        error: "Gemini returned invalid JSON",
+        error:
+          "Gemini returned invalid JSON",
 
-        details: text
+        details:
+          text
 
       });
     }
@@ -275,27 +294,54 @@ Return ONLY valid JSON.
 
     keywords = keywords
       .map(keyword =>
-        String(keyword).trim()
+        String(keyword)
+          .trim()
       )
       .filter(Boolean);
 
-    keywords = [
-      ...new Set(keywords)
-    ];
+    const uniqueKeywords = [];
 
-    metadata.keywords =
-      keywords.slice(0, 49);
+    for (const keyword of keywords) {
+
+      const normalized =
+        keyword.toLowerCase();
+
+      if (
+        !uniqueKeywords.some(
+          existing =>
+            existing.toLowerCase() === normalized
+        )
+      ) {
+        uniqueKeywords.push(keyword);
+      }
+    }
+
+    if (uniqueKeywords.length < 49) {
+
+      return res.status(500).json({
+
+        error:
+          "Gemini generated fewer than 49 unique keywords",
+
+        details:
+          `Generated ${uniqueKeywords.length} unique keywords.`
+
+      });
+    }
+
+    const finalKeywords =
+      uniqueKeywords.slice(0, 49);
 
     return res.status(200).json({
 
       title:
-        metadata.title || "",
+        String(metadata.title || "").trim(),
 
       description:
-        metadata.description || "",
+        String(metadata.description || "").trim(),
 
       keywords:
-        metadata.keywords || []
+        finalKeywords
 
     });
 
@@ -308,9 +354,11 @@ Return ONLY valid JSON.
 
     return res.status(500).json({
 
-      error: "Internal server error",
+      error:
+        "Internal server error",
 
-      details: error.message
+      details:
+        error.message
 
     });
   }
