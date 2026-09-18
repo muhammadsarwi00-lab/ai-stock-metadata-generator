@@ -99,6 +99,7 @@ button {
   padding: 12px 15px;
   font-weight: 700;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button:disabled {
@@ -156,6 +157,7 @@ button:disabled {
   padding: 15px;
   border-radius: 14px;
   line-height: 1.5;
+  word-break: break-word;
 }
 
 .status.loading {
@@ -200,6 +202,7 @@ button:disabled {
   text-align: center;
   font-weight: 700;
   margin-top: 9px;
+  word-break: break-word;
 }
 
 .controls {
@@ -425,9 +428,13 @@ No images selected.
 ></textarea>
 
 
+<!-- FIXED GENERATE BUTTON -->
+
 <button
+  type="button"
   id="generateBtn"
   class="generate-btn"
+  onclick="generateBatch()"
 >
 ✨ Generate Batch Metadata
 </button>
@@ -464,14 +471,17 @@ No images selected.
 <div class="controls">
 
 <button
+  type="button"
   id="pauseBtn"
   class="pause-btn"
   onclick="pauseQueue()"
+  disabled
 >
 ⏸️ Pause
 </button>
 
 <button
+  type="button"
   id="resumeBtn"
   class="resume-btn"
   onclick="resumeQueue()"
@@ -481,9 +491,11 @@ No images selected.
 </button>
 
 <button
+  type="button"
   id="stopBtn"
   class="stop-btn"
   onclick="stopQueue()"
+  disabled
 >
 ⏹️ Stop
 </button>
@@ -513,6 +525,7 @@ No images selected.
 <div class="controls">
 
 <button
+  type="button"
   class="retry-btn"
   onclick="retryFailed()"
 >
@@ -520,6 +533,7 @@ No images selected.
 </button>
 
 <button
+  type="button"
   class="csv-btn"
   onclick="downloadCSV()"
 >
@@ -527,6 +541,7 @@ No images selected.
 </button>
 
 <button
+  type="button"
   class="copy-btn"
   onclick="copyAllResults()"
 >
@@ -534,6 +549,7 @@ No images selected.
 </button>
 
 <button
+  type="button"
   class="clear-btn"
   onclick="clearResults()"
 >
@@ -564,6 +580,8 @@ AI Stock Metadata Generator V5
 
 
 <script>
+
+"use strict";
 
 
 const API_URL =
@@ -674,6 +692,10 @@ const stopBtn =
     "stopBtn"
   );
 
+
+/* =========================
+   FILE SELECTION
+========================= */
 
 imageInput.addEventListener(
   "change",
@@ -805,6 +827,10 @@ function showStatus(
 }
 
 
+/* =========================
+   HELPERS
+========================= */
+
 function sleep(ms) {
 
   return new Promise(
@@ -853,6 +879,10 @@ function formatBytes(bytes) {
 
 }
 
+
+/* =========================
+   IMAGE PROCESSING
+========================= */
 
 function loadImage(file) {
 
@@ -983,6 +1013,15 @@ async function compressImage(
     );
 
 
+  if (!ctx) {
+
+    throw new Error(
+      "Browser canvas is not available."
+    );
+
+  }
+
+
   ctx.drawImage(
     image,
     0,
@@ -1003,6 +1042,15 @@ async function compressImage(
     );
 
 
+  if (!blob) {
+
+    throw new Error(
+      "Unable to compress image."
+    );
+
+  }
+
+
   while (
     blob.size >
     MAX_SEND_SIZE &&
@@ -1019,6 +1067,15 @@ async function compressImage(
         canvas,
         quality
       );
+
+
+    if (!blob) {
+
+      throw new Error(
+        "Unable to compress image."
+      );
+
+    }
 
   }
 
@@ -1053,14 +1110,46 @@ function blobToBase64(
       reader.onloadend =
         function() {
 
+          const result =
+            String(
+              reader.result
+            );
+
+          const parts =
+            result.split(",");
+
+
+          if (
+            parts.length < 2
+          ) {
+
+            reject(
+              new Error(
+                "Unable to convert image."
+              )
+            );
+
+            return;
+
+          }
+
+
           resolve(
-            reader.result.split(",")[1]
+            parts[1]
           );
 
         };
 
       reader.onerror =
-        reject;
+        function() {
+
+          reject(
+            new Error(
+              "Unable to read compressed image."
+            )
+          );
+
+        };
 
       reader.readAsDataURL(
         blob
@@ -1071,6 +1160,10 @@ function blobToBase64(
 
 }
 
+
+/* =========================
+   AI REQUEST
+========================= */
 
 async function callAI(
   file,
@@ -1124,8 +1217,21 @@ async function callAI(
     );
 
 
-  const data =
-    await response.json();
+  let data;
+
+
+  try {
+
+    data =
+      await response.json();
+
+  } catch(error) {
+
+    throw new Error(
+      `Server returned an invalid response (${response.status}).`
+    );
+
+  }
 
 
   if (
@@ -1135,7 +1241,7 @@ async function callAI(
     throw new Error(
       data.details ||
       data.error ||
-      "AI request failed."
+      `AI request failed (${response.status}).`
     );
 
   }
@@ -1171,6 +1277,10 @@ async function callAI(
 
 }
 
+
+/* =========================
+   RESULT OBJECT
+========================= */
 
 function createResult(
   file,
@@ -1213,22 +1323,9 @@ function createResult(
 }
 
 
-function getPendingIndexes() {
-
-  return results
-    .map(
-      (item,index) =>
-        item.status === "waiting"
-          ? index
-          : -1
-    )
-    .filter(
-      index =>
-        index !== -1
-    );
-
-}
-
+/* =========================
+   PROCESS ONE IMAGE
+========================= */
 
 async function processIndex(
   index
@@ -1236,6 +1333,11 @@ async function processIndex(
 
   const item =
     results[index];
+
+
+  if (!item) {
+    return;
+  }
 
 
   item.status =
@@ -1261,6 +1363,12 @@ async function processIndex(
       document.getElementById(
         "description"
       ).value;
+
+
+    showStatus(
+      `🤖 Processing: ${item.filename}`,
+      "loading"
+    );
 
 
     const metadata =
@@ -1305,12 +1413,153 @@ async function processIndex(
 }
 
 
+/* =========================
+   START BATCH
+   FIXED FUNCTION
+========================= */
+
+async function generateBatch() {
+
+  try {
+
+    if (
+      queueRunning
+    ) {
+
+      return;
+
+    }
+
+
+    if (
+      selectedFiles.length === 0
+    ) {
+
+      showStatus(
+        "Please select at least one image.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    /* Disable button immediately */
+
+    generateBtn.disabled =
+      true;
+
+
+    showStatus(
+      `🚀 Starting batch processing for ${selectedFiles.length} image(s)...`,
+      "loading"
+    );
+
+
+    /* Clear old thumbnails */
+
+    results.forEach(
+      item => {
+
+        if (
+          item.thumb
+        ) {
+
+          URL.revokeObjectURL(
+            item.thumb
+          );
+
+        }
+
+      }
+    );
+
+
+    /* Create fresh results */
+
+    results =
+      selectedFiles.map(
+        (
+          file,
+          index
+        ) =>
+          createResult(
+            file,
+            index
+          )
+      );
+
+
+    /* Reset progress */
+
+    progressFill.style.width =
+      "0%";
+
+
+    progressText.textContent =
+      `0 / ${results.length}`;
+
+
+    resultsCard.style.display =
+      "block";
+
+
+    progress.style.display =
+      "block";
+
+
+    renderResults();
+
+
+    /* Start queue */
+
+    await startQueue();
+
+  } catch(error) {
+
+    queueRunning =
+      false;
+
+
+    generateBtn.disabled =
+      false;
+
+
+    showStatus(
+      `❌ ${error.message || "Unable to start batch processing."}`,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   QUEUE
+========================= */
+
 async function startQueue() {
 
   if (
     queueRunning
   ) {
+
     return;
+
+  }
+
+
+  if (
+    results.length === 0
+  ) {
+
+    generateBtn.disabled =
+      false;
+
+    return;
+
   }
 
 
@@ -1363,7 +1612,9 @@ async function startQueue() {
     if (
       stopped
     ) {
+
       break;
+
     }
 
 
@@ -1382,7 +1633,9 @@ async function startQueue() {
     if (
       stopped
     ) {
+
       break;
+
     }
 
 
@@ -1391,6 +1644,7 @@ async function startQueue() {
 
 
     if (
+      !item ||
       item.status !==
       "waiting"
     ) {
@@ -1484,7 +1738,8 @@ async function startQueue() {
     );
 
   } else if (
-    failed === 0
+    failed === 0 &&
+    waiting === 0
   ) {
 
     showStatus(
@@ -1495,7 +1750,7 @@ async function startQueue() {
   } else {
 
     showStatus(
-      `⚠️ Finished. ${successful} successful, ${failed} failed.`,
+      `⚠️ Finished. ${successful} successful, ${failed} failed, ${waiting} waiting.`,
       "error"
     );
 
@@ -1504,62 +1759,9 @@ async function startQueue() {
 }
 
 
-generateBtn.addEventListener(
-  "click",
-  function() {
-
-    if (
-      selectedFiles.length === 0
-    ) {
-
-      showStatus(
-        "Please select at least one image.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    results.forEach(
-      item => {
-
-        if (
-          item.thumb
-        ) {
-
-          URL.revokeObjectURL(
-            item.thumb
-          );
-
-        }
-
-      }
-    );
-
-
-    results =
-      selectedFiles.map(
-        (
-          file,
-          index
-        ) =>
-          createResult(
-            file,
-            index
-          )
-      );
-
-
-    renderResults();
-
-
-    startQueue();
-
-  }
-);
-
+/* =========================
+   PROGRESS
+========================= */
 
 function updateProgress() {
 
@@ -1596,12 +1798,18 @@ function updateProgress() {
 }
 
 
+/* =========================
+   PAUSE / RESUME / STOP
+========================= */
+
 function pauseQueue() {
 
   if (
     !queueRunning
   ) {
+
     return;
+
   }
 
 
@@ -1630,7 +1838,9 @@ function resumeQueue() {
   if (
     !queueRunning
   ) {
+
     return;
+
   }
 
 
@@ -1656,6 +1866,15 @@ function resumeQueue() {
 
 function stopQueue() {
 
+  if (
+    !queueRunning
+  ) {
+
+    return;
+
+  }
+
+
   stopped =
     true;
 
@@ -1671,6 +1890,10 @@ function stopQueue() {
 
 }
 
+
+/* =========================
+   RETRY FAILED
+========================= */
 
 async function retryFailed() {
 
@@ -1735,6 +1958,10 @@ async function retryFailed() {
 }
 
 
+/* =========================
+   REGENERATE
+========================= */
+
 async function regenerate(
   index
 ) {
@@ -1754,6 +1981,11 @@ async function regenerate(
 
   const item =
     results[index];
+
+
+  if (!item) {
+    return;
+  }
 
 
   item.status =
@@ -1818,11 +2050,12 @@ async function regenerate(
 
 
     item.error =
-      error.message;
+      error.message ||
+      "Unknown error.";
 
 
     showStatus(
-      `❌ ${item.filename}: ${error.message}`,
+      `❌ ${item.filename}: ${item.error}`,
       "error"
     );
 
@@ -1834,6 +2067,10 @@ async function regenerate(
 }
 
 
+/* =========================
+   COPY ONE
+========================= */
+
 async function copyItem(
   index
 ) {
@@ -1843,10 +2080,13 @@ async function copyItem(
 
 
   if (
+    !item ||
     item.status !==
     "success"
   ) {
+
     return;
+
   }
 
 
@@ -1885,12 +2125,21 @@ ${item.keywords.join(", ")}`;
 }
 
 
+/* =========================
+   DELETE ITEM
+========================= */
+
 function deleteItem(
   index
 ) {
 
   const item =
     results[index];
+
+
+  if (!item) {
+    return;
+  }
 
 
   if (
@@ -1912,8 +2161,14 @@ function deleteItem(
 
   renderResults();
 
+  updateProgress();
+
 }
 
+
+/* =========================
+   RENDER RESULTS
+========================= */
 
 function renderResults() {
 
@@ -2080,6 +2335,7 @@ function renderResults() {
             item.status === "success"
               ? `
                 <button
+                  type="button"
                   class="copy-btn"
                   onclick="copyItem(${index})"
                 >
@@ -2093,6 +2349,7 @@ function renderResults() {
             item.status === "failed"
               ? `
                 <button
+                  type="button"
                   class="retry-btn"
                   onclick="regenerate(${index})"
                 >
@@ -2106,6 +2363,7 @@ function renderResults() {
             item.status === "success"
               ? `
                 <button
+                  type="button"
                   class="retry-btn"
                   onclick="regenerate(${index})"
                 >
@@ -2116,6 +2374,7 @@ function renderResults() {
           }
 
           <button
+            type="button"
             class="clear-btn"
             onclick="deleteItem(${index})"
           >
@@ -2197,6 +2456,43 @@ function renderResults() {
 }
 
 
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHTML(
+  value
+) {
+
+  return String(value)
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================
+   COPY ALL
+========================= */
+
 async function copyAllResults() {
 
   const successful =
@@ -2261,6 +2557,10 @@ ${item.keywords.join(", ")}
 
 }
 
+
+/* =========================
+   CSV
+========================= */
 
 function escapeCSV(
   value
@@ -2398,7 +2698,24 @@ function downloadCSV() {
 }
 
 
+/* =========================
+   CLEAR RESULTS
+========================= */
+
 function clearResults() {
+
+  if (
+    queueRunning
+  ) {
+
+    alert(
+      "Please stop the current queue first."
+    );
+
+    return;
+
+  }
+
 
   results.forEach(
     item => {
@@ -2447,7 +2764,6 @@ function clearResults() {
   );
 
 }
-
 
 </script>
 
