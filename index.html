@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -9,7 +10,7 @@
   content="width=device-width, initial-scale=1.0"
 >
 
-<title>AI Stock Metadata Generator V3</title>
+<title>AI Stock Metadata Generator V4</title>
 
 <style>
 
@@ -18,7 +19,9 @@
 }
 
 body {
+
   margin: 0;
+
   font-family:
     Arial,
     Helvetica,
@@ -32,230 +35,570 @@ body {
     );
 
   color: #172033;
+
 }
 
 .container {
-  width: min(
-    950px,
-    calc(100% - 28px)
-  );
 
-  margin: 30px auto 60px;
+  width:
+    min(
+      1000px,
+      calc(100% - 24px)
+    );
+
+  margin:
+    25px auto 60px;
+
 }
 
 .header {
+
   text-align: center;
-  margin-bottom: 25px;
+
+  margin-bottom:
+    25px;
+
 }
 
 .header h1 {
+
   margin: 0;
+
   font-size: 32px;
+
 }
 
 .header p {
+
   color: #667085;
+
   margin-top: 8px;
+
+  font-size: 16px;
+
 }
 
 .card {
-  background: white;
-  border-radius: 22px;
-  padding: 25px;
-  margin-bottom: 22px;
+
+  background:
+    white;
+
+  border-radius:
+    22px;
+
+  padding:
+    24px;
+
+  margin-bottom:
+    20px;
 
   box-shadow:
     0 10px 35px
-    rgba(20, 40, 80, 0.08);
+    rgba(20,40,80,0.08);
+
 }
 
 label {
+
   display: block;
+
   font-weight: 700;
+
   font-size: 17px;
-  margin-bottom: 10px;
-}
 
-input[type="file"],
-select,
-textarea {
-  width: 100%;
-}
+  margin-bottom:
+    10px;
 
-select,
-textarea {
-  border: 1px solid #d0d5dd;
-  border-radius: 15px;
-  padding: 15px;
-  font-size: 16px;
-  background: #fff;
-}
-
-textarea {
-  min-height: 120px;
-  resize: vertical;
 }
 
 .upload-box {
-  border: 2px dashed #c7d2fe;
-  border-radius: 18px;
-  padding: 25px;
-  text-align: center;
-  background: #f8faff;
+
+  border:
+    2px dashed #c7d2fe;
+
+  border-radius:
+    18px;
+
+  padding:
+    28px 20px;
+
+  text-align:
+    center;
+
+  background:
+    #f8faff;
+
 }
 
-input[type="file"] {
-  font-size: 15px;
+.file-input {
+
+  width: 100%;
+
+  font-size:
+    15px;
+
 }
 
-.preview {
-  margin-top: 18px;
-  text-align: center;
+.info {
+
+  margin-top:
+    12px;
+
+  color:
+    #667085;
+
+  line-height:
+    1.5;
+
 }
 
-.preview img {
-  max-width: 100%;
-  max-height: 380px;
-  border-radius: 16px;
+select,
+textarea {
+
+  width: 100%;
+
+  border:
+    1px solid #d0d5dd;
+
+  border-radius:
+    15px;
+
+  padding:
+    15px;
+
+  font-size:
+    16px;
+
+  background:
+    white;
+
 }
 
-.file-info {
-  color: #667085;
-  margin-top: 8px;
-}
+textarea {
 
-button {
-  border: none;
-  cursor: pointer;
-  border-radius: 14px;
-  padding: 15px 20px;
-  font-size: 16px;
-  font-weight: 700;
+  min-height:
+    110px;
+
+  resize:
+    vertical;
+
 }
 
 .generate-btn {
+
   width: 100%;
-  margin-top: 20px;
-  background: #2563eb;
-  color: white;
-  font-size: 18px;
+
+  margin-top:
+    20px;
+
+  background:
+    #2563eb;
+
+  color:
+    white;
+
+  border:
+    none;
+
+  border-radius:
+    14px;
+
+  padding:
+    16px;
+
+  font-size:
+    18px;
+
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
+
 }
 
 .generate-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+
+  opacity:
+    0.6;
+
+  cursor:
+    not-allowed;
+
 }
 
 .status {
-  margin-top: 18px;
-  padding: 16px;
-  border-radius: 15px;
-  display: none;
-}
 
-.status.success {
-  display: block;
-  background: #dcfce7;
-  color: #166534;
-}
+  display:
+    none;
 
-.status.error {
-  display: block;
-  background: #fee2e2;
-  color: #991b1b;
+  margin-top:
+    18px;
+
+  padding:
+    16px;
+
+  border-radius:
+    15px;
+
+  line-height:
+    1.5;
+
 }
 
 .status.loading {
+
   display: block;
-  background: #e0ecff;
-  color: #1d4ed8;
+
+  background:
+    #e0ecff;
+
+  color:
+    #1d4ed8;
+
 }
 
-.result-box {
-  border: 1px solid #e4e7ec;
-  border-radius: 17px;
-  padding: 20px;
-  margin-bottom: 18px;
-  background: #fafbfc;
+.status.success {
+
+  display: block;
+
+  background:
+    #dcfce7;
+
+  color:
+    #166534;
+
+}
+
+.status.error {
+
+  display: block;
+
+  background:
+    #fee2e2;
+
+  color:
+    #991b1b;
+
+}
+
+.progress-wrap {
+
+  display:
+    none;
+
+  margin-top:
+    18px;
+
+}
+
+.progress-bar {
+
+  width: 100%;
+
+  height: 12px;
+
+  background:
+    #e5e7eb;
+
+  border-radius:
+    999px;
+
+  overflow:
+    hidden;
+
+}
+
+.progress-fill {
+
+  width: 0%;
+
+  height: 100%;
+
+  background:
+    #2563eb;
+
+  transition:
+    width 0.3s ease;
+
+}
+
+.progress-text {
+
+  text-align:
+    center;
+
+  margin-top:
+    10px;
+
+  font-weight:
+    700;
+
+}
+
+.batch-results {
+
+  display:
+    none;
+
+}
+
+.batch-header {
+
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  flex-wrap:
+    wrap;
+
+  margin-bottom:
+    15px;
+
+}
+
+.batch-header h2 {
+
+  margin: 0;
+
+}
+
+.result-item {
+
+  border:
+    1px solid #e4e7ec;
+
+  border-radius:
+    17px;
+
+  padding:
+    18px;
+
+  margin-bottom:
+    15px;
+
+  background:
+    #fafbfc;
+
+}
+
+.result-item.success {
+
+  border-left:
+    5px solid #16a34a;
+
+}
+
+.result-item.failed {
+
+  border-left:
+    5px solid #dc2626;
+
+}
+
+.result-file {
+
+  font-weight:
+    800;
+
+  margin-bottom:
+    12px;
+
+  word-break:
+    break-word;
+
 }
 
 .result-title {
-  font-size: 19px;
-  font-weight: 800;
-  margin-bottom: 13px;
+
+  font-weight:
+    700;
+
+  margin-top:
+    10px;
+
 }
 
-.result-text {
-  line-height: 1.6;
-  white-space: pre-wrap;
+.result-description {
+
+  margin-top:
+    6px;
+
+  line-height:
+    1.5;
+
 }
 
-.keywords {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.keyword-list {
+
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    6px;
+
+  margin-top:
+    8px;
+
 }
 
 .keyword {
-  background: #eef2ff;
-  color: #3730a3;
-  border-radius: 999px;
-  padding: 7px 11px;
-  font-size: 14px;
+
+  background:
+    #eef2ff;
+
+  color:
+    #3730a3;
+
+  padding:
+    5px 9px;
+
+  border-radius:
+    999px;
+
+  font-size:
+    13px;
+
 }
 
-.action-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 15px;
+.actions {
+
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    10px;
+
+  margin-top:
+    20px;
+
+}
+
+.action-btn {
+
+  border:
+    none;
+
+  border-radius:
+    12px;
+
+  padding:
+    13px 16px;
+
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
+
 }
 
 .copy-btn {
-  background: #111827;
-  color: white;
-}
 
-.copy-btn.secondary {
-  background: #475467;
+  background:
+    #111827;
+
+  color:
+    white;
+
 }
 
 .csv-btn {
-  background: #15803d;
-  color: white;
+
+  background:
+    #15803d;
+
+  color:
+    white;
+
 }
 
-.counter {
-  margin-top: 12px;
-  font-weight: 700;
-  color: #475467;
+.clear-btn {
+
+  background:
+    #475467;
+
+  color:
+    white;
+
+}
+
+.count-box {
+
+  padding:
+    12px;
+
+  border-radius:
+    12px;
+
+  background:
+    #f2f4f7;
+
+  color:
+    #344054;
+
+  margin-bottom:
+    15px;
+
 }
 
 .footer {
-  text-align: center;
-  color: #667085;
-  font-size: 14px;
-  margin-top: 25px;
+
+  text-align:
+    center;
+
+  color:
+    #667085;
+
+  font-size:
+    14px;
+
+  margin-top:
+    25px;
+
 }
 
 @media (max-width: 600px) {
 
   .container {
-    width: calc(100% - 20px);
-    margin-top: 18px;
+
+    width:
+      calc(100% - 18px);
+
   }
 
   .card {
-    padding: 18px;
-    border-radius: 18px;
+
+    padding:
+      18px;
+
   }
 
   .header h1 {
-    font-size: 26px;
+
+    font-size:
+      27px;
+
   }
 
-  .action-row button {
+  .actions .action-btn {
+
     width: 100%;
+
   }
 
 }
@@ -264,228 +607,265 @@ button {
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
-  <div class="header">
 
-    <h1>✨ AI Stock Metadata Generator</h1>
+<div class="header">
 
-    <p>
-      Generate professional stock metadata with AI
-    </p>
+<h1>
+✨ AI Stock Metadata Generator
+</h1>
 
-  </div>
+<p>
+V4 — Batch AI Metadata Generator
+</p>
 
-  <div class="card">
-
-    <label>Upload Image</label>
-
-    <div class="upload-box">
-
-      <input
-        id="imageInput"
-        type="file"
-        accept="image/*"
-      >
-
-      <div class="file-info" id="fileInfo">
-        Maximum original file size: 20 MB
-      </div>
-
-      <div
-        class="preview"
-        id="preview"
-      ></div>
-
-    </div>
-
-    <br>
-
-    <label>Content Category</label>
-
-    <select id="category">
-
-      <option>Food</option>
-      <option>Nature</option>
-      <option>Business</option>
-      <option>Technology</option>
-      <option>Lifestyle</option>
-      <option>Travel</option>
-      <option>People</option>
-      <option>Architecture</option>
-      <option>Objects</option>
-      <option>Background</option>
-      <option>Other</option>
-
-    </select>
-
-    <br><br>
-
-    <label>Additional Description</label>
-
-    <textarea
-      id="description"
-      placeholder="Optional: describe anything important about the image..."
-    ></textarea>
-
-    <button
-      class="generate-btn"
-      id="generateBtn"
-    >
-      ✨ Generate AI Metadata
-    </button>
-
-    <div
-      id="status"
-      class="status"
-    ></div>
-
-  </div>
+</div>
 
 
-  <div
-    class="card"
-    id="results"
-    style="display:none;"
-  >
-
-    <h2>Generated Metadata</h2>
-
-    <div class="result-box">
-
-      <div class="result-title">
-        📌 Title
-      </div>
-
-      <div
-        class="result-text"
-        id="titleResult"
-      ></div>
-
-      <div class="action-row">
-
-        <button
-          class="copy-btn"
-          onclick="copyTitle()"
-        >
-          📋 Copy Title
-        </button>
-
-      </div>
-
-    </div>
+<div class="card">
 
 
-    <div class="result-box">
-
-      <div class="result-title">
-        📝 Description
-      </div>
-
-      <div
-        class="result-text"
-        id="descriptionResult"
-      ></div>
-
-      <div class="action-row">
-
-        <button
-          class="copy-btn"
-          onclick="copyDescription()"
-        >
-          📋 Copy Description
-        </button>
-
-      </div>
-
-    </div>
+<label>
+Upload Images
+</label>
 
 
-    <div class="result-box">
-
-      <div class="result-title">
-        🔑 Keywords
-      </div>
-
-      <div
-        class="keywords"
-        id="keywordsResult"
-      ></div>
-
-      <div
-        class="counter"
-        id="keywordCounter"
-      ></div>
-
-      <div class="action-row">
-
-        <button
-          class="copy-btn"
-          onclick="copyKeywords()"
-        >
-          📋 Copy Keywords
-        </button>
-
-      </div>
-
-    </div>
+<div class="upload-box">
 
 
-    <div class="result-box">
-
-      <div class="result-title">
-        📦 Complete Metadata
-      </div>
-
-      <div class="action-row">
-
-        <button
-          class="copy-btn"
-          onclick="copyAll()"
-        >
-          📋 Copy All Metadata
-        </button>
-
-        <button
-          class="csv-btn"
-          onclick="downloadCSV()"
-        >
-          📥 Export CSV
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
+<input
+  id="imageInput"
+  class="file-input"
+  type="file"
+  accept="image/*"
+  multiple
+>
 
 
-  <div class="footer">
+<div class="info">
 
-    AI Stock Metadata Generator V3
+<strong>
+Maximum 50 images
+</strong>
 
-  </div>
+<br>
+
+Original image size:
+maximum 20 MB per image.
+
+<br>
+
+Images are automatically optimized
+before being sent to AI.
+
+</div>
+
+
+<div
+  id="fileCount"
+  class="info"
+>
+No images selected.
+</div>
+
+
+</div>
+
+
+<br>
+
+
+<label>
+Content Category
+</label>
+
+
+<select id="category">
+
+<option>Food</option>
+
+<option>Nature</option>
+
+<option>Business</option>
+
+<option>Technology</option>
+
+<option>Lifestyle</option>
+
+<option>Travel</option>
+
+<option>People</option>
+
+<option>Architecture</option>
+
+<option>Objects</option>
+
+<option>Background</option>
+
+<option>Other</option>
+
+</select>
+
+
+<br>
+<br>
+
+
+<label>
+Additional Description
+</label>
+
+
+<textarea
+  id="description"
+  placeholder="Optional: describe anything important about the images..."
+></textarea>
+
+
+<button
+  id="generateBtn"
+  class="generate-btn"
+>
+✨ Generate Batch Metadata
+</button>
+
+
+<div
+  id="status"
+  class="status"
+></div>
+
+
+<div
+  id="progressWrap"
+  class="progress-wrap"
+>
+
+<div class="progress-bar">
+
+<div
+  id="progressFill"
+  class="progress-fill"
+></div>
+
+</div>
+
+
+<div
+  id="progressText"
+  class="progress-text"
+>
+0 / 0
+</div>
+
+</div>
+
+
+</div>
+
+
+<div
+  id="resultsCard"
+  class="card batch-results"
+>
+
+
+<div class="batch-header">
+
+<h2>
+📦 Batch Results
+</h2>
+
+</div>
+
+
+<div
+  id="countBox"
+  class="count-box"
+>
+</div>
+
+
+<div
+  id="resultsContainer"
+>
+</div>
+
+
+<div class="actions">
+
+
+<button
+  class="action-btn csv-btn"
+  onclick="downloadCSV()"
+>
+📥 Export All to CSV
+</button>
+
+
+<button
+  class="action-btn copy-btn"
+  onclick="copyAllResults()"
+>
+📋 Copy All
+</button>
+
+
+<button
+  class="action-btn clear-btn"
+  onclick="clearResults()"
+>
+🗑️ Clear Results
+</button>
+
+
+</div>
+
+
+</div>
+
+
+<div class="footer">
+
+AI Stock Metadata Generator V4
+
+</div>
+
 
 </div>
 
 
 <script>
 
-const VERCEL_API = "/api/generate";
+
+const API_URL =
+  "/api/generate";
+
+
+const MAX_FILES =
+  50;
+
 
 const MAX_ORIGINAL_SIZE =
   20 * 1024 * 1024;
 
+
 const MAX_SEND_SIZE =
   3 * 1024 * 1024;
 
-const MAX_DIMENSION = 3000;
 
-let selectedFile = null;
+const MAX_DIMENSION =
+  3000;
 
-let generatedMetadata = null;
+
+let selectedFiles = [];
+
+let results = [];
 
 
 const imageInput =
@@ -493,24 +873,58 @@ const imageInput =
     "imageInput"
   );
 
+
+const fileCount =
+  document.getElementById(
+    "fileCount"
+  );
+
+
 const generateBtn =
   document.getElementById(
     "generateBtn"
   );
+
 
 const statusBox =
   document.getElementById(
     "status"
   );
 
-const preview =
+
+const progressWrap =
   document.getElementById(
-    "preview"
+    "progressWrap"
   );
 
-const fileInfo =
+
+const progressFill =
   document.getElementById(
-    "fileInfo"
+    "progressFill"
+  );
+
+
+const progressText =
+  document.getElementById(
+    "progressText"
+  );
+
+
+const resultsCard =
+  document.getElementById(
+    "resultsCard"
+  );
+
+
+const resultsContainer =
+  document.getElementById(
+    "resultsContainer"
+  );
+
+
+const countBox =
+  document.getElementById(
+    "countBox"
   );
 
 
@@ -518,69 +932,125 @@ imageInput.addEventListener(
   "change",
   function () {
 
-    const file =
-      this.files[0];
-
-    if (!file) {
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-
-      showStatus(
-        "Please select an image file.",
-        "error"
+    const files =
+      Array.from(
+        this.files
       );
 
-      this.value = "";
-
-      return;
-    }
-
     if (
-      file.size >
-      MAX_ORIGINAL_SIZE
+      files.length >
+      MAX_FILES
     ) {
 
       showStatus(
-        "Image is too large. Maximum original file size is 20 MB.",
+        `Maximum ${MAX_FILES} images can be selected.`,
         "error"
       );
 
       this.value = "";
 
+      selectedFiles = [];
+
+      updateFileCount();
+
       return;
+
     }
 
-    selectedFile = file;
 
-    fileInfo.textContent =
-      `${file.name} · ${formatBytes(file.size)}`;
+    const invalid =
+      files.find(
+        file =>
+          !file.type.startsWith(
+            "image/"
+          )
+      );
 
-    const reader =
-      new FileReader();
 
-    reader.onload =
-      function (event) {
+    if (invalid) {
 
-        preview.innerHTML = `
-          <img
-            src="${event.target.result}"
-            alt="Image preview"
-          >
-        `;
+      showStatus(
+        "Only image files are allowed.",
+        "error"
+      );
 
-      };
+      this.value = "";
 
-    reader.readAsDataURL(file);
+      selectedFiles = [];
 
-    showStatus(
-      "Image ready. You can generate metadata.",
-      "success"
-    );
+      updateFileCount();
+
+      return;
+
+    }
+
+
+    const tooLarge =
+      files.find(
+        file =>
+          file.size >
+          MAX_ORIGINAL_SIZE
+      );
+
+
+    if (tooLarge) {
+
+      showStatus(
+        `"${tooLarge.name}" is larger than 20 MB.`,
+        "error"
+      );
+
+      this.value = "";
+
+      selectedFiles = [];
+
+      updateFileCount();
+
+      return;
+
+    }
+
+
+    selectedFiles =
+      files;
+
+
+    updateFileCount();
+
+
+    if (
+      selectedFiles.length
+    ) {
+
+      showStatus(
+        `${selectedFiles.length} image(s) ready for processing.`,
+        "success"
+      );
+
+    }
 
   }
 );
+
+
+function updateFileCount() {
+
+  if (
+    selectedFiles.length === 0
+  ) {
+
+    fileCount.textContent =
+      "No images selected.";
+
+    return;
+
+  }
+
+
+  fileCount.textContent =
+    `${selectedFiles.length} image(s) selected.`;
+
+}
 
 
 function showStatus(
@@ -597,11 +1067,16 @@ function showStatus(
 }
 
 
-function formatBytes(bytes) {
+function formatBytes(
+  bytes
+) {
 
-  if (bytes === 0) {
+  if (
+    bytes === 0
+  ) {
     return "0 Bytes";
   }
+
 
   const units = [
     "Bytes",
@@ -610,17 +1085,22 @@ function formatBytes(bytes) {
     "GB"
   ];
 
+
   const index =
     Math.floor(
       Math.log(bytes) /
       Math.log(1024)
     );
 
+
   return (
     parseFloat(
       (
         bytes /
-        Math.pow(1024, index)
+        Math.pow(
+          1024,
+          index
+        )
       ).toFixed(2)
     ) +
     " " +
@@ -630,108 +1110,25 @@ function formatBytes(bytes) {
 }
 
 
-async function compressImage(file) {
-
-  const image =
-    await loadImage(file);
-
-  let width =
-    image.naturalWidth;
-
-  let height =
-    image.naturalHeight;
-
-  const scale =
-    Math.min(
-      1,
-      MAX_DIMENSION /
-      Math.max(width, height)
-    );
-
-  width =
-    Math.round(
-      width * scale
-    );
-
-  height =
-    Math.round(
-      height * scale
-    );
-
-  const canvas =
-    document.createElement(
-      "canvas"
-    );
-
-  canvas.width =
-    width;
-
-  canvas.height =
-    height;
-
-  const ctx =
-    canvas.getContext("2d");
-
-  ctx.drawImage(
-    image,
-    0,
-    0,
-    width,
-    height
-  );
-
-  let quality = 0.88;
-
-  let blob =
-    await canvasToBlob(
-      canvas,
-      "image/jpeg",
-      quality
-    );
-
-  while (
-    blob.size >
-    MAX_SEND_SIZE &&
-    quality > 0.45
-  ) {
-
-    quality -= 0.07;
-
-    blob =
-      await canvasToBlob(
-        canvas,
-        "image/jpeg",
-        quality
-      );
-
-  }
-
-  if (
-    blob.size >
-    MAX_SEND_SIZE
-  ) {
-
-    throw new Error(
-      "The image could not be compressed below the upload limit."
-    );
-
-  }
-
-  return blob;
-
-}
-
-
-function loadImage(file) {
+function loadImage(
+  file
+) {
 
   return new Promise(
-    (resolve, reject) => {
+    (
+      resolve,
+      reject
+    ) => {
 
       const url =
-        URL.createObjectURL(file);
+        URL.createObjectURL(
+          file
+        );
+
 
       const image =
         new Image();
+
 
       image.onload =
         function () {
@@ -740,9 +1137,12 @@ function loadImage(file) {
             url
           );
 
-          resolve(image);
+          resolve(
+            image
+          );
 
         };
+
 
       image.onerror =
         function () {
@@ -753,11 +1153,12 @@ function loadImage(file) {
 
           reject(
             new Error(
-              "Unable to read this image."
+              "Unable to read image."
             )
           );
 
         };
+
 
       image.src =
         url;
@@ -789,13 +1190,139 @@ function canvasToBlob(
 }
 
 
-function blobToBase64(blob) {
+async function compressImage(
+  file
+) {
+
+  const image =
+    await loadImage(
+      file
+    );
+
+
+  let width =
+    image.naturalWidth;
+
+
+  let height =
+    image.naturalHeight;
+
+
+  const scale =
+    Math.min(
+      1,
+      MAX_DIMENSION /
+      Math.max(
+        width,
+        height
+      )
+    );
+
+
+  width =
+    Math.round(
+      width * scale
+    );
+
+
+  height =
+    Math.round(
+      height * scale
+    );
+
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+
+  canvas.width =
+    width;
+
+
+  canvas.height =
+    height;
+
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+
+  ctx.drawImage(
+    image,
+    0,
+    0,
+    width,
+    height
+  );
+
+
+  let quality =
+    0.88;
+
+
+  let blob =
+    await canvasToBlob(
+      canvas,
+      "image/jpeg",
+      quality
+    );
+
+
+  while (
+    blob.size >
+    MAX_SEND_SIZE &&
+    quality >
+    0.45
+  ) {
+
+    quality -=
+      0.07;
+
+
+    blob =
+      await canvasToBlob(
+        canvas,
+        "image/jpeg",
+        quality
+      );
+
+  }
+
+
+  if (
+    blob.size >
+    MAX_SEND_SIZE
+  ) {
+
+    throw new Error(
+      "Unable to compress image below upload limit."
+    );
+
+  }
+
+
+  return blob;
+
+}
+
+
+function blobToBase64(
+  blob
+) {
 
   return new Promise(
-    (resolve, reject) => {
+    (
+      resolve,
+      reject
+    ) => {
 
       const reader =
         new FileReader();
+
 
       reader.onloadend =
         function () {
@@ -803,19 +1330,149 @@ function blobToBase64(blob) {
           const result =
             reader.result;
 
-          const base64 =
-            result.split(",")[1];
 
-          resolve(base64);
+          const base64 =
+            result.split(
+              ","
+            )[1];
+
+
+          resolve(
+            base64
+          );
 
         };
+
 
       reader.onerror =
         reject;
 
-      reader.readAsDataURL(blob);
+
+      reader.readAsDataURL(
+        blob
+      );
 
     }
+  );
+
+}
+
+
+async function processImage(
+  file,
+  category,
+  description
+) {
+
+  const compressed =
+    await compressImage(
+      file
+    );
+
+
+  const base64 =
+    await blobToBase64(
+      compressed
+    );
+
+
+  const response =
+    await fetch(
+      API_URL,
+      {
+
+        method:
+          "POST",
+
+        headers: {
+
+          "Content-Type":
+            "application/json"
+
+        },
+
+        body:
+          JSON.stringify({
+
+            image:
+              base64,
+
+            mimeType:
+              "image/jpeg",
+
+            category:
+              category,
+
+            description:
+              description
+
+          })
+
+      }
+    );
+
+
+  const data =
+    await response.json();
+
+
+  if (
+    !response.ok
+  ) {
+
+    throw new Error(
+      data.details ||
+      data.error ||
+      "AI request failed."
+    );
+
+  }
+
+
+  if (
+    !data.title ||
+    !data.description ||
+    !Array.isArray(
+      data.keywords
+    )
+  ) {
+
+    throw new Error(
+      "Incomplete metadata returned."
+    );
+
+  }
+
+
+  return {
+
+    filename:
+      file.name,
+
+    title:
+      data.title,
+
+    description:
+      data.description,
+
+    keywords:
+      data.keywords
+
+  };
+
+}
+
+
+async function sleep(
+  ms
+) {
+
+  return new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        ms
+      )
   );
 
 }
@@ -825,10 +1482,12 @@ generateBtn.addEventListener(
   "click",
   async function () {
 
-    if (!selectedFile) {
+    if (
+      selectedFiles.length === 0
+    ) {
 
       showStatus(
-        "Please upload an image first.",
+        "Please select at least one image.",
         "error"
       );
 
@@ -836,155 +1495,182 @@ generateBtn.addEventListener(
 
     }
 
+
     generateBtn.disabled =
       true;
 
-    generatedMetadata =
-      null;
 
-    document.getElementById(
-      "results"
-    ).style.display = "none";
+    results =
+      [];
 
-    try {
+
+    resultsContainer.innerHTML =
+      "";
+
+
+    resultsCard.style.display =
+      "block";
+
+
+    progressWrap.style.display =
+      "block";
+
+
+    progressFill.style.width =
+      "0%";
+
+
+    progressText.textContent =
+      `0 / ${selectedFiles.length}`;
+
+
+    const category =
+      document.getElementById(
+        "category"
+      ).value;
+
+
+    const description =
+      document.getElementById(
+        "description"
+      ).value;
+
+
+    let successCount =
+      0;
+
+
+    let failedCount =
+      0;
+
+
+    for (
+      let i = 0;
+      i < selectedFiles.length;
+      i++
+    ) {
+
+      const file =
+        selectedFiles[i];
+
+
+      progressText.textContent =
+        `Processing ${i + 1} / ${selectedFiles.length}: ${file.name}`;
+
 
       showStatus(
-        "⚡ Optimizing image...",
+        `🤖 Analyzing ${i + 1}/${selectedFiles.length} — ${file.name}`,
         "loading"
       );
 
-      const compressedBlob =
-        await compressImage(
-          selectedFile
-        );
 
-      showStatus(
-        `🤖 Sending image to Gemini... (${formatBytes(compressedBlob.size)})`,
-        "loading"
-      );
+      try {
 
-      const cleanBase64 =
-        await blobToBase64(
-          compressedBlob
-        );
+        const metadata =
+          await processImage(
+            file,
+            category,
+            description
+          );
 
-      const category =
-        document.getElementById(
-          "category"
-        ).value;
 
-      const description =
-        document.getElementById(
-          "description"
-        ).value;
+        results.push({
 
-      const response =
-        await fetch(
-          VERCEL_API,
-          {
-            method: "POST",
+          success:
+            true,
 
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
+          ...metadata
 
-            body:
-              JSON.stringify({
+        });
 
-                image:
-                  cleanBase64,
 
-                mimeType:
-                  "image/jpeg",
+        successCount++;
 
-                category:
-                  category,
 
-                description:
-                  description
-
-              })
-
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-
-        const errorMessage =
-          data.details ||
-          data.error ||
-          "Failed to generate metadata.";
-
-        throw new Error(
-          errorMessage
-        );
-
-      }
-
-      if (
-        !data.title ||
-        !data.description ||
-        !Array.isArray(data.keywords)
+      } catch (
+        error
       ) {
 
-        throw new Error(
-          "Incomplete metadata received from AI."
+        console.error(
+          file.name,
+          error
         );
+
+
+        results.push({
+
+          success:
+            false,
+
+          filename:
+            file.name,
+
+          error:
+            error.message
+
+        });
+
+
+        failedCount++;
 
       }
 
-      if (
-        data.keywords.length !== 49
-      ) {
-
-        throw new Error(
-          `AI returned ${data.keywords.length} keywords instead of 49.`
-        );
-
-      }
-
-      generatedMetadata = {
-
-        title:
-          data.title,
-
-        description:
-          data.description,
-
-        keywords:
-          data.keywords
-
-      };
 
       renderResults();
 
+
+      const percent =
+        Math.round(
+          (
+            (i + 1) /
+            selectedFiles.length
+          ) *
+          100
+        );
+
+
+      progressFill.style.width =
+        `${percent}%`;
+
+
+      // Small pause between requests
+      // to reduce rate-limit pressure.
+
+      if (
+        i <
+        selectedFiles.length - 1
+      ) {
+
+        await sleep(
+          800
+        );
+
+      }
+
+    }
+
+
+    if (
+      failedCount === 0
+    ) {
+
       showStatus(
-        "✅ Metadata generated successfully!",
+        `✅ Finished! ${successCount} image(s) processed successfully.`,
         "success"
       );
 
-    } catch (error) {
-
-      console.error(
-        error
-      );
+    } else {
 
       showStatus(
-        "Gagal membuat metadata: " +
-        error.message,
+        `⚠️ Finished: ${successCount} successful, ${failedCount} failed.`,
         "error"
       );
 
-    } finally {
-
-      generateBtn.disabled =
-        false;
-
     }
+
+
+    generateBtn.disabled =
+      false;
 
   }
 );
@@ -992,194 +1678,336 @@ generateBtn.addEventListener(
 
 function renderResults() {
 
-  document.getElementById(
-    "results"
-  ).style.display = "block";
-
-  document.getElementById(
-    "titleResult"
-  ).textContent =
-    generatedMetadata.title;
-
-  document.getElementById(
-    "descriptionResult"
-  ).textContent =
-    generatedMetadata.description;
-
-  const keywordContainer =
-    document.getElementById(
-      "keywordsResult"
-    );
-
-  keywordContainer.innerHTML =
+  resultsContainer.innerHTML =
     "";
 
-  generatedMetadata.keywords
-    .forEach(
-      function (keyword, index) {
 
-        const span =
-          document.createElement(
-            "span"
-          );
+  results.forEach(
+    function (
+      item,
+      index
+    ) {
 
-        span.className =
-          "keyword";
-
-        span.textContent =
-          `${index + 1}. ${keyword}`;
-
-        keywordContainer.appendChild(
-          span
+      const box =
+        document.createElement(
+          "div"
         );
 
+
+      box.className =
+        item.success
+          ? "result-item success"
+          : "result-item failed";
+
+
+      if (
+        !item.success
+      ) {
+
+        box.innerHTML = `
+
+          <div class="result-file">
+            ❌ ${index + 1}. ${escapeHTML(item.filename)}
+          </div>
+
+          <div>
+            Error:
+            ${escapeHTML(item.error)}
+          </div>
+
+        `;
+
+
+        resultsContainer.appendChild(
+          box
+        );
+
+        return;
+
       }
+
+
+      const keywordsHTML =
+        item.keywords
+          .map(
+            function (
+              keyword,
+              keywordIndex
+            ) {
+
+              return `
+                <span class="keyword">
+                  ${keywordIndex + 1}.
+                  ${escapeHTML(keyword)}
+                </span>
+              `;
+
+            }
+          )
+          .join("");
+
+
+      box.innerHTML = `
+
+        <div class="result-file">
+          ✅ ${index + 1}. ${escapeHTML(item.filename)}
+        </div>
+
+        <div class="result-title">
+          📌 Title
+        </div>
+
+        <div>
+          ${escapeHTML(item.title)}
+        </div>
+
+        <div class="result-title">
+          📝 Description
+        </div>
+
+        <div class="result-description">
+          ${escapeHTML(item.description)}
+        </div>
+
+        <div class="result-title">
+          🔑 Keywords
+          (${item.keywords.length})
+        </div>
+
+        <div class="keyword-list">
+          ${keywordsHTML}
+        </div>
+
+      `;
+
+
+      resultsContainer.appendChild(
+        box
+      );
+
+    }
+  );
+
+
+  const successful =
+    results.filter(
+      item =>
+        item.success
+    ).length;
+
+
+  const failed =
+    results.filter(
+      item =>
+        !item.success
+    ).length;
+
+
+  countBox.textContent =
+    `Processed: ${results.length} · Successful: ${successful} · Failed: ${failed}`;
+
+}
+
+
+function escapeHTML(
+  text
+) {
+
+  return String(
+    text
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+async function copyAllResults() {
+
+  const successful =
+    results.filter(
+      item =>
+        item.success
     );
 
-  document.getElementById(
-    "keywordCounter"
-  ).textContent =
-    `49 / 49 keywords`;
 
-}
+  if (
+    successful.length === 0
+  ) {
 
-
-async function copyText(text) {
-
-  await navigator.clipboard.writeText(
-    text
-  );
-
-}
-
-
-async function copyTitle() {
-
-  if (!generatedMetadata) {
-    return;
-  }
-
-  await copyText(
-    generatedMetadata.title
-  );
-
-  alert(
-    "Title copied!"
-  );
-
-}
-
-
-async function copyDescription() {
-
-  if (!generatedMetadata) {
-    return;
-  }
-
-  await copyText(
-    generatedMetadata.description
-  );
-
-  alert(
-    "Description copied!"
-  );
-
-}
-
-
-async function copyKeywords() {
-
-  if (!generatedMetadata) {
-    return;
-  }
-
-  const text =
-    generatedMetadata.keywords.join(
-      ", "
+    alert(
+      "No successful metadata available."
     );
 
-  await copyText(
-    text
-  );
-
-  alert(
-    "49 keywords copied!"
-  );
-
-}
-
-
-async function copyAll() {
-
-  if (!generatedMetadata) {
     return;
+
   }
 
+
   const text =
-`TITLE:
-${generatedMetadata.title}
+    successful
+      .map(
+        function (
+          item
+        ) {
+
+          return `
+
+FILENAME:
+${item.filename}
+
+TITLE:
+${item.title}
 
 DESCRIPTION:
-${generatedMetadata.description}
+${item.description}
 
 KEYWORDS:
-${generatedMetadata.keywords.join(", ")}`;
+${item.keywords.join(", ")}
 
-  await copyText(
-    text
-  );
+----------------------------
 
-  alert(
-    "Complete metadata copied!"
-  );
+`;
+
+        }
+      )
+      .join("");
+
+
+  try {
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+    alert(
+      `${successful.length} metadata result(s) copied!`
+    );
+
+  } catch (
+    error
+  ) {
+
+    alert(
+      "Unable to copy metadata."
+    );
+
+  }
 
 }
 
 
-function escapeCSV(value) {
+function escapeCSV(
+  value
+) {
 
   return `"${String(value)
-    .replace(/"/g, '""')}"`;
+    .replace(
+      /"/g,
+      '""'
+    )}"`;
 
 }
 
 
 function downloadCSV() {
 
-  if (!generatedMetadata) {
+  const successful =
+    results.filter(
+      item =>
+        item.success
+    );
+
+
+  if (
+    successful.length === 0
+  ) {
+
+    alert(
+      "No successful metadata available."
+    );
+
     return;
+
   }
 
+
   const headers = [
+
     "Filename",
+
     "Title",
+
     "Description",
+
     "Keywords"
-  ];
-
-  const filename =
-    selectedFile
-      ? selectedFile.name
-      : "image";
-
-  const row = [
-
-    filename,
-
-    generatedMetadata.title,
-
-    generatedMetadata.description,
-
-    generatedMetadata.keywords.join(
-      ", "
-    )
 
   ];
+
+
+  const rows =
+    successful.map(
+      function (
+        item
+      ) {
+
+        return [
+
+          item.filename,
+
+          item.title,
+
+          item.description,
+
+          item.keywords.join(
+            ", "
+          )
+
+        ];
+
+      }
+    );
+
 
   const csv =
-    headers.map(escapeCSV).join(",") +
+
+    headers
+      .map(
+        escapeCSV
+      )
+      .join(",") +
+
     "\n" +
-    row.map(escapeCSV).join(",");
+
+    rows
+      .map(
+        row =>
+          row
+            .map(
+              escapeCSV
+            )
+            .join(",")
+      )
+      .join("\n");
+
 
   const blob =
     new Blob(
@@ -1190,29 +2018,37 @@ function downloadCSV() {
       }
     );
 
+
   const url =
-    URL.createObjectURL(blob);
+    URL.createObjectURL(
+      blob
+    );
+
 
   const link =
-    document.createElement("a");
+    document.createElement(
+      "a"
+    );
+
 
   link.href =
     url;
 
+
   link.download =
-    filename.replace(
-      /\.[^/.]+$/,
-      ""
-    ) +
-    "-metadata.csv";
+    "ai-stock-metadata-v4.csv";
+
 
   document.body.appendChild(
     link
   );
 
+
   link.click();
 
+
   link.remove();
+
 
   URL.revokeObjectURL(
     url
@@ -1220,7 +2056,48 @@ function downloadCSV() {
 
 }
 
+
+function clearResults() {
+
+  results =
+    [];
+
+
+  resultsContainer.innerHTML =
+    "";
+
+
+  countBox.textContent =
+    "";
+
+
+  resultsCard.style.display =
+    "none";
+
+
+  progressWrap.style.display =
+    "none";
+
+
+  progressFill.style.width =
+    "0%";
+
+
+  progressText.textContent =
+    "0 / 0";
+
+
+  showStatus(
+    "Results cleared.",
+    "success"
+  );
+
+}
+
+
 </script>
 
+
 </body>
+
 </html>
