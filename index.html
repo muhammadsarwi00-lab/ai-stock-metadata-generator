@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
@@ -10,7 +9,7 @@
   content="width=device-width, initial-scale=1.0"
 >
 
-<title>AI Stock Metadata Generator V4</title>
+<title>AI Stock Metadata Generator V5</title>
 
 <style>
 
@@ -19,586 +18,329 @@
 }
 
 body {
-
   margin: 0;
-
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
-  background:
-    linear-gradient(
-      135deg,
-      #f5f7fb,
-      #eef3ff
-    );
-
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg,#f5f7fb,#eef3ff);
   color: #172033;
-
 }
 
 .container {
-
-  width:
-    min(
-      1000px,
-      calc(100% - 24px)
-    );
-
-  margin:
-    25px auto 60px;
-
+  width: min(1000px,calc(100% - 20px));
+  margin: 22px auto 60px;
 }
 
 .header {
-
   text-align: center;
-
-  margin-bottom:
-    25px;
-
+  margin-bottom: 22px;
 }
 
 .header h1 {
-
   margin: 0;
-
-  font-size: 32px;
-
+  font-size: 30px;
 }
 
 .header p {
-
   color: #667085;
-
   margin-top: 8px;
-
-  font-size: 16px;
-
 }
 
 .card {
-
-  background:
-    white;
-
-  border-radius:
-    22px;
-
-  padding:
-    24px;
-
-  margin-bottom:
-    20px;
-
-  box-shadow:
-    0 10px 35px
-    rgba(20,40,80,0.08);
-
+  background: white;
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 35px rgba(20,40,80,.08);
 }
 
 label {
-
   display: block;
-
   font-weight: 700;
-
   font-size: 17px;
-
-  margin-bottom:
-    10px;
-
+  margin-bottom: 10px;
 }
 
 .upload-box {
-
-  border:
-    2px dashed #c7d2fe;
-
-  border-radius:
-    18px;
-
-  padding:
-    28px 20px;
-
-  text-align:
-    center;
-
-  background:
-    #f8faff;
-
+  border: 2px dashed #c7d2fe;
+  border-radius: 18px;
+  padding: 25px 18px;
+  text-align: center;
+  background: #f8faff;
 }
 
 .file-input {
-
   width: 100%;
-
-  font-size:
-    15px;
-
+  font-size: 15px;
 }
 
 .info {
-
-  margin-top:
-    12px;
-
-  color:
-    #667085;
-
-  line-height:
-    1.5;
-
+  margin-top: 10px;
+  color: #667085;
+  line-height: 1.5;
 }
 
 select,
 textarea {
-
   width: 100%;
-
-  border:
-    1px solid #d0d5dd;
-
-  border-radius:
-    15px;
-
-  padding:
-    15px;
-
-  font-size:
-    16px;
-
-  background:
-    white;
-
+  border: 1px solid #d0d5dd;
+  border-radius: 15px;
+  padding: 14px;
+  font-size: 16px;
+  background: white;
 }
 
 textarea {
+  min-height: 100px;
+  resize: vertical;
+}
 
-  min-height:
-    110px;
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-  resize:
-    vertical;
-
+button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
 }
 
 .generate-btn {
-
   width: 100%;
-
-  margin-top:
-    20px;
-
-  background:
-    #2563eb;
-
-  color:
-    white;
-
-  border:
-    none;
-
-  border-radius:
-    14px;
-
-  padding:
-    16px;
-
-  font-size:
-    18px;
-
-  font-weight:
-    700;
-
-  cursor:
-    pointer;
-
+  margin-top: 18px;
+  background: #2563eb;
+  color: white;
+  font-size: 18px;
+  padding: 16px;
 }
 
-.generate-btn:disabled {
-
-  opacity:
-    0.6;
-
-  cursor:
-    not-allowed;
-
+.pause-btn {
+  background: #f59e0b;
+  color: white;
 }
 
-.status {
-
-  display:
-    none;
-
-  margin-top:
-    18px;
-
-  padding:
-    16px;
-
-  border-radius:
-    15px;
-
-  line-height:
-    1.5;
-
+.resume-btn {
+  background: #16a34a;
+  color: white;
 }
 
-.status.loading {
-
-  display: block;
-
-  background:
-    #e0ecff;
-
-  color:
-    #1d4ed8;
-
+.stop-btn {
+  background: #dc2626;
+  color: white;
 }
 
-.status.success {
-
-  display: block;
-
-  background:
-    #dcfce7;
-
-  color:
-    #166534;
-
-}
-
-.status.error {
-
-  display: block;
-
-  background:
-    #fee2e2;
-
-  color:
-    #991b1b;
-
-}
-
-.progress-wrap {
-
-  display:
-    none;
-
-  margin-top:
-    18px;
-
-}
-
-.progress-bar {
-
-  width: 100%;
-
-  height: 12px;
-
-  background:
-    #e5e7eb;
-
-  border-radius:
-    999px;
-
-  overflow:
-    hidden;
-
-}
-
-.progress-fill {
-
-  width: 0%;
-
-  height: 100%;
-
-  background:
-    #2563eb;
-
-  transition:
-    width 0.3s ease;
-
-}
-
-.progress-text {
-
-  text-align:
-    center;
-
-  margin-top:
-    10px;
-
-  font-weight:
-    700;
-
-}
-
-.batch-results {
-
-  display:
-    none;
-
-}
-
-.batch-header {
-
-  display:
-    flex;
-
-  justify-content:
-    space-between;
-
-  align-items:
-    center;
-
-  gap:
-    10px;
-
-  flex-wrap:
-    wrap;
-
-  margin-bottom:
-    15px;
-
-}
-
-.batch-header h2 {
-
-  margin: 0;
-
-}
-
-.result-item {
-
-  border:
-    1px solid #e4e7ec;
-
-  border-radius:
-    17px;
-
-  padding:
-    18px;
-
-  margin-bottom:
-    15px;
-
-  background:
-    #fafbfc;
-
-}
-
-.result-item.success {
-
-  border-left:
-    5px solid #16a34a;
-
-}
-
-.result-item.failed {
-
-  border-left:
-    5px solid #dc2626;
-
-}
-
-.result-file {
-
-  font-weight:
-    800;
-
-  margin-bottom:
-    12px;
-
-  word-break:
-    break-word;
-
-}
-
-.result-title {
-
-  font-weight:
-    700;
-
-  margin-top:
-    10px;
-
-}
-
-.result-description {
-
-  margin-top:
-    6px;
-
-  line-height:
-    1.5;
-
-}
-
-.keyword-list {
-
-  display:
-    flex;
-
-  flex-wrap:
-    wrap;
-
-  gap:
-    6px;
-
-  margin-top:
-    8px;
-
-}
-
-.keyword {
-
-  background:
-    #eef2ff;
-
-  color:
-    #3730a3;
-
-  padding:
-    5px 9px;
-
-  border-radius:
-    999px;
-
-  font-size:
-    13px;
-
-}
-
-.actions {
-
-  display:
-    flex;
-
-  flex-wrap:
-    wrap;
-
-  gap:
-    10px;
-
-  margin-top:
-    20px;
-
-}
-
-.action-btn {
-
-  border:
-    none;
-
-  border-radius:
-    12px;
-
-  padding:
-    13px 16px;
-
-  font-weight:
-    700;
-
-  cursor:
-    pointer;
-
-}
-
-.copy-btn {
-
-  background:
-    #111827;
-
-  color:
-    white;
-
+.retry-btn {
+  background: #7c3aed;
+  color: white;
 }
 
 .csv-btn {
+  background: #15803d;
+  color: white;
+}
 
-  background:
-    #15803d;
-
-  color:
-    white;
-
+.copy-btn {
+  background: #111827;
+  color: white;
 }
 
 .clear-btn {
-
-  background:
-    #475467;
-
-  color:
-    white;
-
+  background: #475467;
+  color: white;
 }
 
-.count-box {
+.status {
+  display: none;
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 14px;
+  line-height: 1.5;
+}
 
-  padding:
-    12px;
+.status.loading {
+  display: block;
+  background: #e0ecff;
+  color: #1d4ed8;
+}
 
-  border-radius:
-    12px;
+.status.success {
+  display: block;
+  background: #dcfce7;
+  color: #166534;
+}
 
-  background:
-    #f2f4f7;
+.status.error {
+  display: block;
+  background: #fee2e2;
+  color: #991b1b;
+}
 
-  color:
-    #344054;
+.progress {
+  display: none;
+  margin-top: 18px;
+}
 
-  margin-bottom:
-    15px;
+.progress-bar {
+  width: 100%;
+  height: 13px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
 
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #2563eb;
+  transition: width .3s ease;
+}
+
+.progress-text {
+  text-align: center;
+  font-weight: 700;
+  margin-top: 9px;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.batch-results {
+  display: none;
+}
+
+.summary {
+  background: #f2f4f7;
+  padding: 14px;
+  border-radius: 13px;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.result-item {
+  border: 1px solid #e4e7ec;
+  border-radius: 17px;
+  padding: 16px;
+  margin-bottom: 15px;
+  background: #fafbfc;
+}
+
+.result-item.success {
+  border-left: 5px solid #16a34a;
+}
+
+.result-item.failed {
+  border-left: 5px solid #dc2626;
+}
+
+.result-item.processing {
+  border-left: 5px solid #2563eb;
+}
+
+.result-top {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+}
+
+.thumb {
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.result-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.filename {
+  font-weight: 800;
+  word-break: break-word;
+  margin-bottom: 6px;
+}
+
+.result-status {
+  font-size: 14px;
+  color: #667085;
+}
+
+.meta-title {
+  font-weight: 800;
+  margin-top: 14px;
+  margin-bottom: 5px;
+}
+
+.description {
+  line-height: 1.5;
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.keyword {
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 13px;
+}
+
+.item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.item-actions button {
+  font-size: 13px;
 }
 
 .footer {
-
-  text-align:
-    center;
-
-  color:
-    #667085;
-
-  font-size:
-    14px;
-
-  margin-top:
-    25px;
-
+  text-align: center;
+  color: #667085;
+  font-size: 14px;
+  margin-top: 25px;
 }
 
-@media (max-width: 600px) {
+@media(max-width:600px) {
 
   .container {
-
-    width:
-      calc(100% - 18px);
-
+    width: calc(100% - 12px);
   }
 
   .card {
-
-    padding:
-      18px;
-
+    padding: 17px;
+    border-radius: 18px;
   }
 
   .header h1 {
-
-    font-size:
-      27px;
-
+    font-size: 26px;
   }
 
-  .actions .action-btn {
+  .controls button {
+    flex: 1 1 45%;
+  }
 
-    width: 100%;
+  .item-actions button {
+    flex: 1 1 45%;
+  }
 
+  .thumb {
+    width: 70px;
+    height: 70px;
   }
 
 }
@@ -607,36 +349,24 @@ textarea {
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
-
 <div class="header">
 
-<h1>
-✨ AI Stock Metadata Generator
-</h1>
+<h1>✨ AI Stock Metadata Generator</h1>
 
-<p>
-V4 — Batch AI Metadata Generator
-</p>
+<p>V5 — Stock Contributor Workflow</p>
 
 </div>
 
 
 <div class="card">
 
-
-<label>
-Upload Images
-</label>
-
+<label>Upload Images</label>
 
 <div class="upload-box">
-
 
 <input
   id="imageInput"
@@ -646,25 +376,11 @@ Upload Images
   multiple
 >
 
-
 <div class="info">
-
-<strong>
-Maximum 50 images
-</strong>
-
-<br>
-
-Original image size:
-maximum 20 MB per image.
-
-<br>
-
-Images are automatically optimized
-before being sent to AI.
-
+<strong>Maximum 50 images</strong><br>
+Maximum original size: 20 MB per image.<br>
+Images are automatically optimized before AI processing.
 </div>
-
 
 <div
   id="fileCount"
@@ -673,53 +389,35 @@ before being sent to AI.
 No images selected.
 </div>
 
-
 </div>
 
 
 <br>
 
 
-<label>
-Content Category
-</label>
-
+<label>Content Category</label>
 
 <select id="category">
 
 <option>Food</option>
-
 <option>Nature</option>
-
 <option>Business</option>
-
 <option>Technology</option>
-
 <option>Lifestyle</option>
-
 <option>Travel</option>
-
 <option>People</option>
-
 <option>Architecture</option>
-
 <option>Objects</option>
-
 <option>Background</option>
-
 <option>Other</option>
 
 </select>
 
 
-<br>
-<br>
+<br><br>
 
 
-<label>
-Additional Description
-</label>
-
+<label>Additional Description</label>
 
 <textarea
   id="description"
@@ -742,8 +440,8 @@ Additional Description
 
 
 <div
-  id="progressWrap"
-  class="progress-wrap"
+  id="progress"
+  class="progress"
 >
 
 <div class="progress-bar">
@@ -755,7 +453,6 @@ Additional Description
 
 </div>
 
-
 <div
   id="progressText"
   class="progress-text"
@@ -763,8 +460,37 @@ Additional Description
 0 / 0
 </div>
 
+
+<div class="controls">
+
+<button
+  id="pauseBtn"
+  class="pause-btn"
+  onclick="pauseQueue()"
+>
+⏸️ Pause
+</button>
+
+<button
+  id="resumeBtn"
+  class="resume-btn"
+  onclick="resumeQueue()"
+  disabled
+>
+▶️ Resume
+</button>
+
+<button
+  id="stopBtn"
+  class="stop-btn"
+  onclick="stopQueue()"
+>
+⏹️ Stop
+</button>
+
 </div>
 
+</div>
 
 </div>
 
@@ -774,21 +500,50 @@ Additional Description
   class="card batch-results"
 >
 
-
-<div class="batch-header">
-
-<h2>
-📦 Batch Results
-</h2>
-
-</div>
+<h2>📦 Batch Results</h2>
 
 
 <div
-  id="countBox"
-  class="count-box"
+  id="summary"
+  class="summary"
 >
 </div>
+
+
+<div class="controls">
+
+<button
+  class="retry-btn"
+  onclick="retryFailed()"
+>
+🔄 Retry Failed
+</button>
+
+<button
+  class="csv-btn"
+  onclick="downloadCSV()"
+>
+📥 Export CSV
+</button>
+
+<button
+  class="copy-btn"
+  onclick="copyAllResults()"
+>
+📋 Copy All
+</button>
+
+<button
+  class="clear-btn"
+  onclick="clearResults()"
+>
+🗑️ Clear
+</button>
+
+</div>
+
+
+<br>
 
 
 <div
@@ -797,43 +552,11 @@ Additional Description
 </div>
 
 
-<div class="actions">
-
-
-<button
-  class="action-btn csv-btn"
-  onclick="downloadCSV()"
->
-📥 Export All to CSV
-</button>
-
-
-<button
-  class="action-btn copy-btn"
-  onclick="copyAllResults()"
->
-📋 Copy All
-</button>
-
-
-<button
-  class="action-btn clear-btn"
-  onclick="clearResults()"
->
-🗑️ Clear Results
-</button>
-
-
-</div>
-
-
 </div>
 
 
 <div class="footer">
-
-AI Stock Metadata Generator V4
-
+AI Stock Metadata Generator V5
 </div>
 
 
@@ -867,6 +590,12 @@ let selectedFiles = [];
 
 let results = [];
 
+let queueRunning = false;
+
+let paused = false;
+
+let stopped = false;
+
 
 const imageInput =
   document.getElementById(
@@ -892,9 +621,9 @@ const statusBox =
   );
 
 
-const progressWrap =
+const progress =
   document.getElementById(
-    "progressWrap"
+    "progress"
   );
 
 
@@ -922,20 +651,39 @@ const resultsContainer =
   );
 
 
-const countBox =
+const summary =
   document.getElementById(
-    "countBox"
+    "summary"
+  );
+
+
+const pauseBtn =
+  document.getElementById(
+    "pauseBtn"
+  );
+
+
+const resumeBtn =
+  document.getElementById(
+    "resumeBtn"
+  );
+
+
+const stopBtn =
+  document.getElementById(
+    "stopBtn"
   );
 
 
 imageInput.addEventListener(
   "change",
-  function () {
+  function() {
 
     const files =
       Array.from(
         this.files
       );
+
 
     if (
       files.length >
@@ -943,7 +691,7 @@ imageInput.addEventListener(
     ) {
 
       showStatus(
-        `Maximum ${MAX_FILES} images can be selected.`,
+        `Maximum ${MAX_FILES} images allowed.`,
         "error"
       );
 
@@ -1023,7 +771,7 @@ imageInput.addEventListener(
     ) {
 
       showStatus(
-        `${selectedFiles.length} image(s) ready for processing.`,
+        `${selectedFiles.length} image(s) ready.`,
         "success"
       );
 
@@ -1035,20 +783,10 @@ imageInput.addEventListener(
 
 function updateFileCount() {
 
-  if (
-    selectedFiles.length === 0
-  ) {
-
-    fileCount.textContent =
-      "No images selected.";
-
-    return;
-
-  }
-
-
   fileCount.textContent =
-    `${selectedFiles.length} image(s) selected.`;
+    selectedFiles.length
+      ? `${selectedFiles.length} image(s) selected.`
+      : "No images selected.";
 
 }
 
@@ -1067,16 +805,24 @@ function showStatus(
 }
 
 
-function formatBytes(
-  bytes
-) {
+function sleep(ms) {
 
-  if (
-    bytes === 0
-  ) {
+  return new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        ms
+      )
+  );
+
+}
+
+
+function formatBytes(bytes) {
+
+  if (!bytes) {
     return "0 Bytes";
   }
-
 
   const units = [
     "Bytes",
@@ -1085,13 +831,11 @@ function formatBytes(
     "GB"
   ];
 
-
   const index =
     Math.floor(
       Math.log(bytes) /
       Math.log(1024)
     );
-
 
   return (
     parseFloat(
@@ -1110,42 +854,32 @@ function formatBytes(
 }
 
 
-function loadImage(
-  file
-) {
+function loadImage(file) {
 
   return new Promise(
-    (
-      resolve,
-      reject
-    ) => {
+    (resolve,reject) => {
 
       const url =
         URL.createObjectURL(
           file
         );
 
-
       const image =
         new Image();
 
-
       image.onload =
-        function () {
+        function() {
 
           URL.revokeObjectURL(
             url
           );
 
-          resolve(
-            image
-          );
+          resolve(image);
 
         };
 
-
       image.onerror =
-        function () {
+        function() {
 
           URL.revokeObjectURL(
             url
@@ -1159,7 +893,6 @@ function loadImage(
 
         };
 
-
       image.src =
         url;
 
@@ -1171,7 +904,6 @@ function loadImage(
 
 function canvasToBlob(
   canvas,
-  type,
   quality
 ) {
 
@@ -1180,7 +912,7 @@ function canvasToBlob(
 
       canvas.toBlob(
         resolve,
-        type,
+        "image/jpeg",
         quality
       );
 
@@ -1267,7 +999,6 @@ async function compressImage(
   let blob =
     await canvasToBlob(
       canvas,
-      "image/jpeg",
       quality
     );
 
@@ -1286,7 +1017,6 @@ async function compressImage(
     blob =
       await canvasToBlob(
         canvas,
-        "image/jpeg",
         quality
       );
 
@@ -1299,7 +1029,7 @@ async function compressImage(
   ) {
 
     throw new Error(
-      "Unable to compress image below upload limit."
+      "Image could not be compressed below the upload limit."
     );
 
   }
@@ -1315,38 +1045,22 @@ function blobToBase64(
 ) {
 
   return new Promise(
-    (
-      resolve,
-      reject
-    ) => {
+    (resolve,reject) => {
 
       const reader =
         new FileReader();
 
-
       reader.onloadend =
-        function () {
-
-          const result =
-            reader.result;
-
-
-          const base64 =
-            result.split(
-              ","
-            )[1];
-
+        function() {
 
           resolve(
-            base64
+            reader.result.split(",")[1]
           );
 
         };
 
-
       reader.onerror =
         reject;
-
 
       reader.readAsDataURL(
         blob
@@ -1358,7 +1072,7 @@ function blobToBase64(
 }
 
 
-async function processImage(
+async function callAI(
   file,
   category,
   description
@@ -1385,10 +1099,8 @@ async function processImage(
           "POST",
 
         headers: {
-
           "Content-Type":
             "application/json"
-
         },
 
         body:
@@ -1446,9 +1158,6 @@ async function processImage(
 
   return {
 
-    filename:
-      file.name,
-
     title:
       data.title,
 
@@ -1463,24 +1172,341 @@ async function processImage(
 }
 
 
-async function sleep(
-  ms
+function createResult(
+  file,
+  index
 ) {
 
-  return new Promise(
-    resolve =>
-      setTimeout(
-        resolve,
-        ms
+  return {
+
+    index:
+      index,
+
+    file:
+      file,
+
+    filename:
+      file.name,
+
+    status:
+      "waiting",
+
+    title:
+      "",
+
+    description:
+      "",
+
+    keywords:
+      [],
+
+    error:
+      "",
+
+    thumb:
+      URL.createObjectURL(
+        file
       )
-  );
+
+  };
+
+}
+
+
+function getPendingIndexes() {
+
+  return results
+    .map(
+      (item,index) =>
+        item.status === "waiting"
+          ? index
+          : -1
+    )
+    .filter(
+      index =>
+        index !== -1
+    );
+
+}
+
+
+async function processIndex(
+  index
+) {
+
+  const item =
+    results[index];
+
+
+  item.status =
+    "processing";
+
+
+  item.error =
+    "";
+
+
+  renderResults();
+
+
+  try {
+
+    const category =
+      document.getElementById(
+        "category"
+      ).value;
+
+
+    const description =
+      document.getElementById(
+        "description"
+      ).value;
+
+
+    const metadata =
+      await callAI(
+        item.file,
+        category,
+        description
+      );
+
+
+    item.title =
+      metadata.title;
+
+
+    item.description =
+      metadata.description;
+
+
+    item.keywords =
+      metadata.keywords;
+
+
+    item.status =
+      "success";
+
+
+  } catch(error) {
+
+    item.status =
+      "failed";
+
+
+    item.error =
+      error.message ||
+      "Unknown error.";
+
+  }
+
+
+  renderResults();
+
+}
+
+
+async function startQueue() {
+
+  if (
+    queueRunning
+  ) {
+    return;
+  }
+
+
+  queueRunning =
+    true;
+
+
+  paused =
+    false;
+
+
+  stopped =
+    false;
+
+
+  pauseBtn.disabled =
+    false;
+
+
+  resumeBtn.disabled =
+    true;
+
+
+  stopBtn.disabled =
+    false;
+
+
+  generateBtn.disabled =
+    true;
+
+
+  progress.style.display =
+    "block";
+
+
+  resultsCard.style.display =
+    "block";
+
+
+  const total =
+    results.length;
+
+
+  for (
+    let i = 0;
+    i < total;
+    i++
+  ) {
+
+    if (
+      stopped
+    ) {
+      break;
+    }
+
+
+    while (
+      paused &&
+      !stopped
+    ) {
+
+      await sleep(
+        500
+      );
+
+    }
+
+
+    if (
+      stopped
+    ) {
+      break;
+    }
+
+
+    const item =
+      results[i];
+
+
+    if (
+      item.status !==
+      "waiting"
+    ) {
+
+      continue;
+
+    }
+
+
+    progressText.textContent =
+      `Processing ${i + 1} / ${total}: ${item.filename}`;
+
+
+    await processIndex(
+      i
+    );
+
+
+    updateProgress();
+
+
+    if (
+      !stopped &&
+      i <
+      total - 1
+    ) {
+
+      await sleep(
+        900
+      );
+
+    }
+
+  }
+
+
+  queueRunning =
+    false;
+
+
+  generateBtn.disabled =
+    false;
+
+
+  pauseBtn.disabled =
+    true;
+
+
+  resumeBtn.disabled =
+    true;
+
+
+  stopBtn.disabled =
+    true;
+
+
+  updateProgress();
+
+
+  const successful =
+    results.filter(
+      item =>
+        item.status ===
+        "success"
+    ).length;
+
+
+  const failed =
+    results.filter(
+      item =>
+        item.status ===
+        "failed"
+    ).length;
+
+
+  const waiting =
+    results.filter(
+      item =>
+        item.status ===
+        "waiting"
+    ).length;
+
+
+  if (
+    stopped
+  ) {
+
+    showStatus(
+      `⏹️ Queue stopped. ${successful} successful, ${failed} failed, ${waiting} waiting.`,
+      "error"
+    );
+
+  } else if (
+    failed === 0
+  ) {
+
+    showStatus(
+      `✅ Finished! ${successful} image(s) processed successfully.`,
+      "success"
+    );
+
+  } else {
+
+    showStatus(
+      `⚠️ Finished. ${successful} successful, ${failed} failed.`,
+      "error"
+    );
+
+  }
 
 }
 
 
 generateBtn.addEventListener(
   "click",
-  async function () {
+  function() {
 
     if (
       selectedFiles.length === 0
@@ -1496,33 +1522,252 @@ generateBtn.addEventListener(
     }
 
 
-    generateBtn.disabled =
-      true;
+    results.forEach(
+      item => {
+
+        if (
+          item.thumb
+        ) {
+
+          URL.revokeObjectURL(
+            item.thumb
+          );
+
+        }
+
+      }
+    );
 
 
     results =
-      [];
+      selectedFiles.map(
+        (
+          file,
+          index
+        ) =>
+          createResult(
+            file,
+            index
+          )
+      );
 
 
-    resultsContainer.innerHTML =
-      "";
+    renderResults();
 
 
-    resultsCard.style.display =
-      "block";
+    startQueue();
+
+  }
+);
 
 
-    progressWrap.style.display =
-      "block";
+function updateProgress() {
+
+  const total =
+    results.length;
 
 
-    progressFill.style.width =
-      "0%";
+  const completed =
+    results.filter(
+      item =>
+        item.status === "success" ||
+        item.status === "failed"
+    ).length;
 
 
-    progressText.textContent =
-      `0 / ${selectedFiles.length}`;
+  const percent =
+    total
+      ? Math.round(
+          (
+            completed /
+            total
+          ) * 100
+        )
+      : 0;
 
+
+  progressFill.style.width =
+    `${percent}%`;
+
+
+  progressText.textContent =
+    `${completed} / ${total} completed`;
+
+}
+
+
+function pauseQueue() {
+
+  if (
+    !queueRunning
+  ) {
+    return;
+  }
+
+
+  paused =
+    true;
+
+
+  pauseBtn.disabled =
+    true;
+
+
+  resumeBtn.disabled =
+    false;
+
+
+  showStatus(
+    "⏸️ Queue paused. Current request will finish first.",
+    "loading"
+  );
+
+}
+
+
+function resumeQueue() {
+
+  if (
+    !queueRunning
+  ) {
+    return;
+  }
+
+
+  paused =
+    false;
+
+
+  pauseBtn.disabled =
+    false;
+
+
+  resumeBtn.disabled =
+    true;
+
+
+  showStatus(
+    "▶️ Queue resumed.",
+    "loading"
+  );
+
+}
+
+
+function stopQueue() {
+
+  stopped =
+    true;
+
+
+  paused =
+    false;
+
+
+  showStatus(
+    "⏹️ Stopping after the current request...",
+    "error"
+  );
+
+}
+
+
+async function retryFailed() {
+
+  if (
+    queueRunning
+  ) {
+
+    alert(
+      "Please wait until the current batch finishes."
+    );
+
+    return;
+
+  }
+
+
+  const failed =
+    results.filter(
+      item =>
+        item.status ===
+        "failed"
+    );
+
+
+  if (
+    failed.length === 0
+  ) {
+
+    alert(
+      "There are no failed images."
+    );
+
+    return;
+
+  }
+
+
+  failed.forEach(
+    item => {
+
+      item.status =
+        "waiting";
+
+      item.error =
+        "";
+
+    }
+  );
+
+
+  renderResults();
+
+
+  showStatus(
+    `🔄 Retrying ${failed.length} failed image(s)...`,
+    "loading"
+  );
+
+
+  await startQueue();
+
+}
+
+
+async function regenerate(
+  index
+) {
+
+  if (
+    queueRunning
+  ) {
+
+    alert(
+      "Please wait until the current batch finishes."
+    );
+
+    return;
+
+  }
+
+
+  const item =
+    results[index];
+
+
+  item.status =
+    "processing";
+
+
+  item.error =
+    "";
+
+
+  renderResults();
+
+
+  try {
 
     const category =
       document.getElementById(
@@ -1536,144 +1781,138 @@ generateBtn.addEventListener(
       ).value;
 
 
-    let successCount =
-      0;
-
-
-    let failedCount =
-      0;
-
-
-    for (
-      let i = 0;
-      i < selectedFiles.length;
-      i++
-    ) {
-
-      const file =
-        selectedFiles[i];
-
-
-      progressText.textContent =
-        `Processing ${i + 1} / ${selectedFiles.length}: ${file.name}`;
-
-
-      showStatus(
-        `🤖 Analyzing ${i + 1}/${selectedFiles.length} — ${file.name}`,
-        "loading"
+    const metadata =
+      await callAI(
+        item.file,
+        category,
+        description
       );
 
 
-      try {
-
-        const metadata =
-          await processImage(
-            file,
-            category,
-            description
-          );
+    item.title =
+      metadata.title;
 
 
-        results.push({
-
-          success:
-            true,
-
-          ...metadata
-
-        });
+    item.description =
+      metadata.description;
 
 
-        successCount++;
+    item.keywords =
+      metadata.keywords;
 
 
-      } catch (
-        error
-      ) {
-
-        console.error(
-          file.name,
-          error
-        );
+    item.status =
+      "success";
 
 
-        results.push({
-
-          success:
-            false,
-
-          filename:
-            file.name,
-
-          error:
-            error.message
-
-        });
+    showStatus(
+      `✅ ${item.filename} regenerated successfully.`,
+      "success"
+    );
 
 
-        failedCount++;
+  } catch(error) {
 
-      }
-
-
-      renderResults();
+    item.status =
+      "failed";
 
 
-      const percent =
-        Math.round(
-          (
-            (i + 1) /
-            selectedFiles.length
-          ) *
-          100
-        );
+    item.error =
+      error.message;
 
 
-      progressFill.style.width =
-        `${percent}%`;
-
-
-      // Small pause between requests
-      // to reduce rate-limit pressure.
-
-      if (
-        i <
-        selectedFiles.length - 1
-      ) {
-
-        await sleep(
-          800
-        );
-
-      }
-
-    }
-
-
-    if (
-      failedCount === 0
-    ) {
-
-      showStatus(
-        `✅ Finished! ${successCount} image(s) processed successfully.`,
-        "success"
-      );
-
-    } else {
-
-      showStatus(
-        `⚠️ Finished: ${successCount} successful, ${failedCount} failed.`,
-        "error"
-      );
-
-    }
-
-
-    generateBtn.disabled =
-      false;
+    showStatus(
+      `❌ ${item.filename}: ${error.message}`,
+      "error"
+    );
 
   }
-);
+
+
+  renderResults();
+
+}
+
+
+async function copyItem(
+  index
+) {
+
+  const item =
+    results[index];
+
+
+  if (
+    item.status !==
+    "success"
+  ) {
+    return;
+  }
+
+
+  const text =
+`FILENAME:
+${item.filename}
+
+TITLE:
+${item.title}
+
+DESCRIPTION:
+${item.description}
+
+KEYWORDS:
+${item.keywords.join(", ")}`;
+
+
+  try {
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+    alert(
+      "Metadata copied!"
+    );
+
+  } catch(error) {
+
+    alert(
+      "Unable to copy metadata."
+    );
+
+  }
+
+}
+
+
+function deleteItem(
+  index
+) {
+
+  const item =
+    results[index];
+
+
+  if (
+    item.thumb
+  ) {
+
+    URL.revokeObjectURL(
+      item.thumb
+    );
+
+  }
+
+
+  results.splice(
+    index,
+    1
+  );
+
+
+  renderResults();
+
+}
 
 
 function renderResults() {
@@ -1683,7 +1922,7 @@ function renderResults() {
 
 
   results.forEach(
-    function (
+    function(
       item,
       index
     ) {
@@ -1695,87 +1934,194 @@ function renderResults() {
 
 
       box.className =
-        item.success
-          ? "result-item success"
-          : "result-item failed";
+        `result-item ${item.status}`;
+
+
+      let statusText =
+        "Waiting";
 
 
       if (
-        !item.success
+        item.status ===
+        "processing"
       ) {
 
-        box.innerHTML = `
+        statusText =
+          "🤖 Processing...";
 
-          <div class="result-file">
-            ❌ ${index + 1}. ${escapeHTML(item.filename)}
+      }
+
+
+      if (
+        item.status ===
+        "success"
+      ) {
+
+        statusText =
+          "✅ Generated";
+
+      }
+
+
+      if (
+        item.status ===
+        "failed"
+      ) {
+
+        statusText =
+          "❌ Failed";
+
+      }
+
+
+      let content =
+        "";
+
+
+      if (
+        item.status ===
+        "success"
+      ) {
+
+        const keywords =
+          item.keywords
+            .map(
+              (
+                keyword,
+                keywordIndex
+              ) =>
+                `<span class="keyword">
+                  ${keywordIndex + 1}. ${escapeHTML(keyword)}
+                </span>`
+            )
+            .join("");
+
+
+        content = `
+
+          <div class="meta-title">
+            📌 Title
           </div>
 
           <div>
-            Error:
+            ${escapeHTML(item.title)}
+          </div>
+
+          <div class="meta-title">
+            📝 Description
+          </div>
+
+          <div class="description">
+            ${escapeHTML(item.description)}
+          </div>
+
+          <div class="meta-title">
+            🔑 Keywords (${item.keywords.length})
+          </div>
+
+          <div class="keywords">
+            ${keywords}
+          </div>
+
+        `;
+
+      }
+
+
+      if (
+        item.status ===
+        "failed"
+      ) {
+
+        content = `
+
+          <div class="meta-title">
+            ❌ Error
+          </div>
+
+          <div class="description">
             ${escapeHTML(item.error)}
           </div>
 
         `;
 
-
-        resultsContainer.appendChild(
-          box
-        );
-
-        return;
-
       }
-
-
-      const keywordsHTML =
-        item.keywords
-          .map(
-            function (
-              keyword,
-              keywordIndex
-            ) {
-
-              return `
-                <span class="keyword">
-                  ${keywordIndex + 1}.
-                  ${escapeHTML(keyword)}
-                </span>
-              `;
-
-            }
-          )
-          .join("");
 
 
       box.innerHTML = `
 
-        <div class="result-file">
-          ✅ ${index + 1}. ${escapeHTML(item.filename)}
+        <div class="result-top">
+
+          <img
+            class="thumb"
+            src="${item.thumb}"
+            alt=""
+          >
+
+          <div class="result-info">
+
+            <div class="filename">
+              ${index + 1}. ${escapeHTML(item.filename)}
+            </div>
+
+            <div class="result-status">
+              ${statusText}
+            </div>
+
+          </div>
+
         </div>
 
-        <div class="result-title">
-          📌 Title
-        </div>
+        ${content}
 
-        <div>
-          ${escapeHTML(item.title)}
-        </div>
+        <div class="item-actions">
 
-        <div class="result-title">
-          📝 Description
-        </div>
+          ${
+            item.status === "success"
+              ? `
+                <button
+                  class="copy-btn"
+                  onclick="copyItem(${index})"
+                >
+                  📋 Copy
+                </button>
+              `
+              : ""
+          }
 
-        <div class="result-description">
-          ${escapeHTML(item.description)}
-        </div>
+          ${
+            item.status === "failed"
+              ? `
+                <button
+                  class="retry-btn"
+                  onclick="regenerate(${index})"
+                >
+                  🔄 Retry
+                </button>
+              `
+              : ""
+          }
 
-        <div class="result-title">
-          🔑 Keywords
-          (${item.keywords.length})
-        </div>
+          ${
+            item.status === "success"
+              ? `
+                <button
+                  class="retry-btn"
+                  onclick="regenerate(${index})"
+                >
+                  🔁 Regenerate
+                </button>
+              `
+              : ""
+          }
 
-        <div class="keyword-list">
-          ${keywordsHTML}
+          <button
+            class="clear-btn"
+            onclick="deleteItem(${index})"
+          >
+            🗑️ Remove
+          </button>
+
         </div>
 
       `;
@@ -1792,50 +2138,61 @@ function renderResults() {
   const successful =
     results.filter(
       item =>
-        item.success
+        item.status ===
+        "success"
     ).length;
 
 
   const failed =
     results.filter(
       item =>
-        !item.success
+        item.status ===
+        "failed"
     ).length;
 
 
-  countBox.textContent =
-    `Processed: ${results.length} · Successful: ${successful} · Failed: ${failed}`;
+  const processing =
+    results.filter(
+      item =>
+        item.status ===
+        "processing"
+    ).length;
 
-}
+
+  const waiting =
+    results.filter(
+      item =>
+        item.status ===
+        "waiting"
+    ).length;
 
 
-function escapeHTML(
-  text
-) {
+  summary.innerHTML = `
 
-  return String(
-    text
-  )
-  .replace(
-    /&/g,
-    "&amp;"
-  )
-  .replace(
-    /</g,
-    "&lt;"
-  )
-  .replace(
-    />/g,
-    "&gt;"
-  )
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-  .replace(
-    /'/g,
-    "&#039;"
-  );
+    📊 Total:
+    <strong>${results.length}</strong>
+
+    &nbsp; · &nbsp;
+
+    ✅ Success:
+    <strong>${successful}</strong>
+
+    &nbsp; · &nbsp;
+
+    ❌ Failed:
+    <strong>${failed}</strong>
+
+    &nbsp; · &nbsp;
+
+    🤖 Processing:
+    <strong>${processing}</strong>
+
+    &nbsp; · &nbsp;
+
+    ⏳ Waiting:
+    <strong>${waiting}</strong>
+
+  `;
 
 }
 
@@ -1845,7 +2202,8 @@ async function copyAllResults() {
   const successful =
     results.filter(
       item =>
-        item.success
+        item.status ===
+        "success"
     );
 
 
@@ -1865,13 +2223,8 @@ async function copyAllResults() {
   const text =
     successful
       .map(
-        function (
-          item
-        ) {
-
-          return `
-
-FILENAME:
+        item =>
+`FILENAME:
 ${item.filename}
 
 TITLE:
@@ -1883,13 +2236,9 @@ ${item.description}
 KEYWORDS:
 ${item.keywords.join(", ")}
 
-----------------------------
-
-`;
-
-        }
+----------------------------`
       )
-      .join("");
+      .join("\n\n");
 
 
   try {
@@ -1902,9 +2251,7 @@ ${item.keywords.join(", ")}
       `${successful.length} metadata result(s) copied!`
     );
 
-  } catch (
-    error
-  ) {
+  } catch(error) {
 
     alert(
       "Unable to copy metadata."
@@ -1933,7 +2280,8 @@ function downloadCSV() {
   const successful =
     results.filter(
       item =>
-        item.success
+        item.status ===
+        "success"
     );
 
 
@@ -1965,30 +2313,23 @@ function downloadCSV() {
 
   const rows =
     successful.map(
-      function (
-        item
-      ) {
+      item => [
 
-        return [
+        item.filename,
 
-          item.filename,
+        item.title,
 
-          item.title,
+        item.description,
 
-          item.description,
+        item.keywords.join(
+          ", "
+        )
 
-          item.keywords.join(
-            ", "
-          )
-
-        ];
-
-      }
+      ]
     );
 
 
   const csv =
-
     headers
       .map(
         escapeCSV
@@ -2036,7 +2377,7 @@ function downloadCSV() {
 
 
   link.download =
-    "ai-stock-metadata-v4.csv";
+    "ai-stock-metadata-v5.csv";
 
 
   document.body.appendChild(
@@ -2059,6 +2400,23 @@ function downloadCSV() {
 
 function clearResults() {
 
+  results.forEach(
+    item => {
+
+      if (
+        item.thumb
+      ) {
+
+        URL.revokeObjectURL(
+          item.thumb
+        );
+
+      }
+
+    }
+  );
+
+
   results =
     [];
 
@@ -2067,15 +2425,11 @@ function clearResults() {
     "";
 
 
-  countBox.textContent =
-    "";
-
-
   resultsCard.style.display =
     "none";
 
 
-  progressWrap.style.display =
+  progress.style.display =
     "none";
 
 
@@ -2097,7 +2451,5 @@ function clearResults() {
 
 </script>
 
-
 </body>
-
 </html>
